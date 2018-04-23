@@ -21,25 +21,41 @@
     <link href="css/style.css" rel="stylesheet">
 
     <!-- Web JavaScript-->
-    <script src="js/load-regform.js"></script>
+    <script src="js/load-template.js"></script>
+
+
+    <!--socketio-->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+      socket.on('connect', function() {
+        socket.emit('my event', {data: 'I\'m connected!'});
+      });
+    </script>
+    <!-- end socketio-->
 
   </head>
 
   <body>
 
-    <div class="index-container">
-      <div class="logo">
-        <img class="img-circle" src="img/logo.png" alt="Irene" width="150px">
+
+    <div class="home-container">
+      <div class="navbar"></div>
+
+      <div class="content">
+
+
+        <div class="chat message-area">
+          message in your area
+        </div>
+
+
+       </textarea>
+        <div class="chat-type">
+          <input class="chat" type="text">
+        </div>
       </div>
-      <div class="login-form">
-        <label for="username">username:</label>
-        <input type="text" id="username-login" required><br>
-        <label for="password">password:</label>
-        <input type="password" id="password-login" required><br>
-        <a class="btn btn-login" href="home.html" role="button">Login</a>
-        <a class="btn btn-reg" role="button">Register</a>
-      </div>
-      <div id="register-form"></div>
+
     </div>
 
 
