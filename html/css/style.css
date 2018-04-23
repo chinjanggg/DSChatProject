@@ -12,6 +12,21 @@ body {
   margin: 20px;
 }
 
+.btn {
+  background-color: white;
+  display: inline-block;
+  border-radius: 0.25rem;
+  /* border: 2px solid black; */
+  color: black;
+  -webkit-transition-duration: 0.2s; /* Safari */
+  transition-duration: 0.2s;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+.btn:hover {
+  color: black;
+}
+
 #register-form {
   margin: 10px auto;
   background-color: lightpink;
@@ -34,14 +49,35 @@ td {
   height: 100%;
 }
 
-nav {
-}
-.nav-button {
-  /* text-align: right; */
+div.navbar {
+  margin-bottom: 0px;
 }
 
 .content {
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 0px;
+  margin-left: 2%;
+  margin-right: 2%;
+  padding: 2%;
+  padding-top: 0;
+  margin-top: 0;
+  p
+}
+
+.chat.message-area {
+  height: 75%;
+  background-color: pink;
+  padding: 10px;
+}
+
+.chat-type {
+  position: fixed;
+  width: 46%;
+  height: 10%;
+  bottom: 5px;
+  margin-top: -10px;
+
+}
+
+input.chat {
+  width: 100%;
+  height: 100%;
 }
