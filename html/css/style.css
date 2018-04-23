@@ -1,9 +1,28 @@
+body {
+  background-color: lightgreen;
+}
+
 .container {
   width:100%;
   text-align: center;
-  margin-top: 5%;
+  margin-top: 50px;
 }
 
 .logo {
   margin: 20px;
+}
+
+#register-form {
+  margin: 10px auto;
+  background-color: lightpink;
+  width: 400px;
+}
+
+table {
+  font-family: arial, sans-serif;
+  margin-left: auto;
+  margin-right: auto;
+}
+td {
+  padding: 8px;
 }
