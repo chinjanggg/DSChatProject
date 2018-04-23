@@ -2,7 +2,7 @@ body {
   background-color: lightgreen;
 }
 
-.container {
+.index-container {
   width:100%;
   text-align: center;
   margin-top: 50px;
@@ -25,4 +25,17 @@ table {
 }
 td {
   padding: 8px;
+}
+
+.home-container {
+  width: 50%;
+  background-color: lightgrey;
+  margin: 0 auto;
+  height: 100%;
+}
+
+nav {
+}
+.nav-button {
+  /* text-align: right; */
 }
