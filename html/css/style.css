@@ -1,5 +1,10 @@
 body {
   background-color: lightgreen;
+  height: 100%;
+}
+
+html {
+  height: 100%;
 }
 
 .index-container {
@@ -13,7 +18,7 @@ body {
 }
 
 .btn {
-  background-color: white;
+  background-color: lightgrey;
   display: inline-block;
   border-radius: 0.25rem;
   /* border: 2px solid black; */
@@ -25,6 +30,11 @@ body {
 }
 .btn:hover {
   color: black;
+  opacity: 0.8;
+}
+
+.input-field {
+  margin: 5px;
 }
 
 #register-form {
@@ -59,20 +69,21 @@ div.navbar {
   padding: 2%;
   padding-top: 0;
   margin-top: 0;
-  p
+
 }
 
-.chat.message-area {
-  height: 75%;
+.message-show {
+  /* position: absolute; */
   background-color: pink;
   padding: 10px;
+  height: 75%;
 }
 
-.chat-type {
+.message-input {
   position: fixed;
   width: 46%;
   height: 10%;
-  bottom: 5px;
+  bottom: 10px;
   margin-top: -10px;
 
 }
