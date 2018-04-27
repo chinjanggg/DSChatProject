@@ -7,21 +7,24 @@
     <title> DS Chat Web Project </title>
 
     <!--Bootstrap-->
+	<!--jQuery & Bootstrap JS-->
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <!-- Latest compiled and minified JavaScript -->
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="js/jquery.scrl.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery.scrl.js') }}"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="bootstrap/js/ie10-viewport-bug-workaround.js" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap/js/ie10-viewport-bug-workaround.js') }}" rel="stylesheet">
 
     <!-- Web CSS-->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 
     <!-- Web JavaScript-->
-    <script src="js/load-regform.js"></script>
+    <script src="{{ url_for('static', filename='js/load-regform.js') }}"></script>
 
   </head>
 
@@ -39,18 +42,11 @@
           <input type="password" id="password-login" placeholder="password" required><br>
         </div>
         <div class="button-field">
-        <a class="btn btn-login" href="home.html" role="button">Login</a>
+        <a class="btn btn-login" href="/chat" role="button">Login</a>
         <a class="btn btn-reg" role="button">Register</a>
       </div>
       <div id="register-form"></div>
     </div>
-
-
-    <!--jQuery & Bootstrap JS-->
-    <script src="bootstrap/js/jquery.min.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="bootstrap/js/ie10-viewport-bug-workaround.js"></script>
+    
   </body>
 </html>
