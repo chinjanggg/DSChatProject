@@ -22,6 +22,7 @@
 
     <!-- Web CSS-->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/grid-container.css') }}" rel="stylesheet">
 
     <!-- Web JavaScript-->
     <script src="{{ url_for('static', filename='js/load-template.js') }}"></script>
@@ -46,21 +47,27 @@
   </head>
 
   <body>
+    <div class="grid-container">
+      <div class="empty-left"></div> 
 
-
-    <div class="home-container">
-      <div class="navbar"></div>
-
-      <div class="content">
-        <div class="chat message-show">
-          message in your area
-        </div>
-
-        <div class="chat message-input">
-          <input class="chat" type="text">
-        </div>
+      <div class="nav">
+          nav
       </div>
 
+      <div class="list">
+          list
+      </div>
+        
+      <div class="chat">
+          chat
+      </div>
+      
+      <div class="empty-right"></div> 
+          
     </div>
+
+
+
+  
 </body>
 </html>
