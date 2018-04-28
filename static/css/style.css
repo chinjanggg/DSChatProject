@@ -52,24 +52,12 @@ td {
   padding: 8px;
 }
 
-.home-container {
-  width: 50%;
-  background-color: lightgrey;
+.navbar {
+  margin-bottom: 0;
   margin: 0 auto;
-  height: 100%;
 }
-
 div.navbar {
-  margin-bottom: 0px;
-}
-
-.content {
-  margin-left: 2%;
-  margin-right: 2%;
-  padding: 2%;
-  padding-top: 0;
-  margin-top: 0;
-
+  width: 80%;
 }
 
 .message-show {

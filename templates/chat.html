@@ -23,51 +23,89 @@
     <!-- Web CSS-->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/grid-container.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet">
 
-    <!-- Web JavaScript-->
-    <script src="{{ url_for('static', filename='js/load-template.js') }}"></script>
-
+    <!--JavaScript-->
 
     <!--socketio-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
     <script type="text/javascript" charset="utf-8">
-	$(document).ready(function() {
-      var socket = io.connect('http://localhost:5000');
-      socket.on('connect', function() {
-		console.log('connected');
-      });
-	  
-	  socket.on('receive_message', function(message) {
-		console.log(message.data)
-	  });
-	 });
+	     $(document).ready(function() {
+         var socket = io.connect('http://localhost:5000');
+         socket.on('connect', function() {
+		         console.log('connected');
+         });
+
+         socket.on('receive_message', function(message) {
+           $(".message-area").append(message);
+           console.log(message.data)
+	       });
+	     });
     </script>
     <!-- end socketio-->
+
+
 
   </head>
 
   <body>
-    <div class="grid-container">
-      <div class="empty-left"></div> 
+    <div class="navbar">
+      <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <a class="navbar-brand" href="home.html">DChat</a>
+          </div>
 
-      <div class="nav">
-          nav
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <a id="addFriend" class="btn btn-addchat">Create Chat</a>
+              <a class="btn btn-logout">Log Out</a>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p><h2>Create Chat</h2></p>
+        <div class="search-field">
+          <input type="text" id="friend-username" placeholder="username" required><br><br>
+          <a class="btn btn-create">Create</a>
+        </div>
+
       </div>
+
+    </div>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+
+    <div class="grid-container">
 
       <div class="list">
           list
       </div>
-        
+
       <div class="chat">
-          chat
+        <div class="chat message-area">
+          message in your area
+        </div>
+        <div class="chat-type">
+          <input id="chat-input" type="text" onkeydown="sendMessage(event)">
+          <a class="btn btn-sendmsg">Send</a>
+        </div>
       </div>
-      
-      <div class="empty-right"></div> 
-          
+
+
     </div>
 
 
 
-  
+
 </body>
 </html>

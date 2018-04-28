@@ -1,5 +1,4 @@
 $(document).ready(function() {
-  console.log('hi');
     var socket = io.connect('http://localhost:5000');
     socket.on('connect', function() {
   console.log('connected');

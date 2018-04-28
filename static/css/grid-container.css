@@ -1,34 +1,51 @@
-.nav	{ grid-area: nav; }
 .list 	{ grid-area: list; }
 .chat 	{ grid-area: chat; }
-.empty-left { grid-area: l; }
-.empty-right { grid-area: r; }
 
 .grid-container {
 	display: grid;
-	grid-template-areas:   
-		'l nav nav nav nav nav r'
-		'l list list chat chat chat r'
-		'l list list chat chat chat r'
-		'l list list chat chat chat r'
-		'l list list chat chat chat r'
-		'l list list chat chat chat r'
-		'l list list chat chat chat r'
-		'l list list chat chat chat r'
-		'l list list chat chat chat r';
+	grid-template-areas:
+		'list list chat chat chat'
+		'list list chat chat chat'
+		'list list chat chat chat'
+		'list list chat chat chat'
+		'list list chat chat chat'
+		'list list chat chat chat';
 	grid-gap: 2px;
 	background-color: #00E56E;
-	width: 100%; 
-	grid-auto-rows: 81px;
+	width: 80%;
+	height: 91%;
+	margin: 0 auto;
+	/* grid-auto-rows: 81px; */
 	padding: 3px;
-	/*align-self: center;*/
-	/*align-content: center;*/
-	/*align-items: center;*/
 }
 .grid-container > div {
-   	background-color: rgba(255, 255, 255, 0.8);
-   	padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
 	width: 100%;
-	text-align: center;
+	height: 100%;
+	bottom: 0;
 }
 
+.chat.message-area {
+  height: 92%;
+  background-color: pink;
+  padding: 10px;
+}
+
+.chat-type {
+  position: fixed;
+  width: 49%;
+  height: 8%;
+  bottom: 15px;
+  margin-top: -10px;
+
+}
+
+input#chat-input {
+  width: 87%;
+  height: 70%;
+}
+
+button.btn-sendmsg {
+	padding: 5px;
+}
