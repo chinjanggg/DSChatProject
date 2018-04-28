@@ -37,9 +37,15 @@
          });
 
          socket.on('receive_message', function(message) {
-           $(".message-area").append(message);
+           $(".message-area").append(message+'<br>');
            console.log(message.data)
 	       });
+
+         $(".btn-sendmsg").on('click', function() {
+           socket.send($("#chat-input").val());
+           $("#chat-input").val("");
+         });
+
 	     });
     </script>
     <!-- end socketio-->
@@ -84,6 +90,7 @@
 
     </div>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <!-- end modal -->
 
     <div class="grid-container">
 
