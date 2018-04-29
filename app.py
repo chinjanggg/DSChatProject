@@ -109,7 +109,9 @@ def login():
 			print('invalid')
 			#flash('Invalid username or password')
 			return redirect(url_for('login'))
-		login_user(load_user(user_entry[0]))
+		user = load_user(user_entry[0])
+		login_user(user)
+		session['user'] = user_entry[1]
 		return redirect(url_for('chat'))
 	return render_template('login.html', form=form)
 
@@ -117,6 +119,7 @@ def login():
 @login_required
 def logout():
 	logout_user()
+	session['user'] = None
 	return redirect('/')
 	
 @app.route('/chat/')
