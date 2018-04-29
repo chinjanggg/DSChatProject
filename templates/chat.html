@@ -43,6 +43,7 @@
 
          socket.on('message', function(msg) {
            $(".message-area").append('<li>'+msg+'</li>');
+           updateScroll();
          });
 
          $(".btn-sendmsg").on('click', function() {
@@ -51,9 +52,11 @@
            $("#chat-input").val("");
          });
 
-
-
-
+         function updateScroll() {
+           var msgDiv = document.getElementById("message-area");
+           msgDiv.scrollTop = msgDiv.scrollHeight - msgDiv.clientHeight;
+         }
+         
 	     });
     </script>
     <!-- end socketio-->
@@ -105,7 +108,7 @@
       </div>
 
       <div class="chat">
-        <div class="chat message-area">
+        <div id="message-area" class="chat message-area">
           message in your area
         </div>
         <div class="chat-type">

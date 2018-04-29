@@ -27,9 +27,10 @@
 }
 
 .chat.message-area {
-  height: 92%;
+  height: 460px;
   background-color: pink;
   padding: 10px;
+	overflow: auto;
 }
 
 .chat-type {
