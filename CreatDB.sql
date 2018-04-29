@@ -1,3 +1,9 @@
+CREATE USER 'ds_chat'@'localhost' IDENTIFIED BY 'alchemy';
+
+CREATE SCHEMA `ds_chat` ;
+
+use ds_chat;
+
 CREATE TABLE Client
 (
   CID VARCHAR(20) NOT NULL,
