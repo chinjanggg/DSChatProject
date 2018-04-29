@@ -20,7 +20,7 @@
     padding: 20px;
     border: 1px solid #888;
     width: 30%;
-    height: 60%;
+    height: 300px;
     text-align: center;
 }
 
@@ -39,7 +39,48 @@
     cursor: pointer;
 }
 
-.search-field {
+input {
+  width: 50%;
+}
+
+.name-field {
+  padding: 5px;
+  padding-bottom: 5px;
+  width: 100%;
+  text-align: left;
+}
+
+.friend-field {
   padding: 5px;
   padding-bottom: 10px;
+  width: 100%;
+  text-align: left;
+
+}
+
+#btn-addfriend {
+  float: right;
+}
+
+.friendlistdiv {
+  height: 80px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  overflow: auto;
+  padding-left: 50px;
+}
+
+#friendlist {
+  display: inline-block;
+  width: 100%;
+}
+
+#friendlist li {
+  float: left;
+  list-style: outside;
+  width: 50%;
+}
+
+.button-field {
 }
