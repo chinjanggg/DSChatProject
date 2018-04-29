@@ -1,15 +1,20 @@
 import functools
 from flask import Flask, session, redirect, request, render_template, url_for
-from flask_login import current_user, LoginManager
+from flask_login import current_user, LoginManager, login_required, login_user, logout_user, UserMixin
 from flask_socketio import SocketIO, emit, join_room, leave_room, disconnect, send
+from flask_wtf import FlaskForm
+from werkzeug.security import generate_password_hash, check_password_hash
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired
 import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
-login_manager = LoginManager()
+login_manager = LoginManager(app)
 login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 @socketio.on('connect')
 def connect():
@@ -18,23 +23,13 @@ def connect():
 		{'message': '{0} has joined'.format(current_user.name)},
 		broadcast=True)
 	else:
-		return redirect(url_for('login'))
-
-def authenticated_only(f):
-    @functools.wraps(f)
-    def wrapped(*args, **kwargs):
-        if not current_user.is_authenticated:
-            disconnect()
-        else:
-            return f(*args, **kwargs)
-    return wrapped
+		return render_template('login.html')
 
 @socketio.on('disconnect')
 def disconnect():
     print('Client disconnected')
 
 @socketio.on('join')
-@authenticated_only
 def on_join(data):
 	username = data['username']
 	room = data['room']
@@ -65,11 +60,45 @@ def handle_message(message):
 	print('received: ' + str(message), user, now)
 	send_message(message, user, now)
 
-@app.route('/login/')
+'''class User(UserMixin), db.Model):
+	# items
+	
+	def set_password(self, password):
+		self.password_hash = generate_password_hash(password)
+	def check_password(self, password):
+		return check_password_hash(self.password_hash, password)'''
+	
+@login_manager.user_loader
+def load_user(user_id):
+	return User.get(user_id)
+	
+class LoginForm(FlaskForm):
+	username = StringField('Username', validators=[DataRequired()])
+	password = PasswordField('Password', validators=[DataRequired()])
+	submit = SubmitField('Login')
+	
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
-	return render_template('login.html')
+	if current_user.is_authenticated:
+		return redirect(url_for('chat'))
+	form = LoginForm()
+	if form.validate_on_submit():
+		'''user = User.query.filter_by(username=form.username.data).first()
+		if user is None or not user.check_password(form.password.data):
+			flash('Invalid username or password')
+			return redirect(url_for('login'))'''
+		#login_user(user)
+		return redirect(url_for('chat'))
+	return render_template('login.html', form=form)
 
+@app.route('/logout/')
+@login_required
+def logout():
+	logout_user()
+	return redirect('/')
+	
 @app.route('/chat/')
+@login_required
 def chat():
 	return render_template('chat.html')
 
