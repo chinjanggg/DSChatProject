@@ -23,3 +23,11 @@ chat page:
 > message area
   - show username
   - show time
+
+##################################################
+db-relate function
+> Chatlist
+> Authen
+> LoadChatBox
+> insertChatBox
+> CreateChat

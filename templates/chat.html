@@ -26,6 +26,7 @@
     <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet">
 
     <!--JavaScript-->
+    <script src="{{ url_for('static', filename='js/loadData.js') }}"></script>
 
     <!--socketio-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
@@ -69,7 +70,7 @@
 
   </head>
 
-  <body>
+  <body onload="loadPage()">
     <div class="navbar">
       <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -119,13 +120,14 @@
     <div class="grid-container">
 
       <div class="list">
-          list
+        <div id="chat-list" class="chat-list-container">
+          <div class="chat-list-head"> Chatlist </div>
+        </div>
       </div>
 
       <div class="chat">
-        <div id="message-area" class="chat message-area">
-          message in your area
-        </div>
+        <div class="chat-box-head"> Chat's Name </div>
+        <div id="message-area" class="chat message-area"></div>
         <div class="chat-type">
           <input id="chat-input" type="text" placeholder="type message here">
           <a class="btn btn-sendmsg">Send</a>
@@ -139,4 +141,6 @@
 
 
 </body>
+
+
 </html>
