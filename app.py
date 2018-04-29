@@ -1,12 +1,15 @@
 import functools
-from flask import Flask, session, redirect, request, render_template
-from flask_login import current_user
+from flask import Flask, session, redirect, request, render_template, url_for
+from flask_login import current_user, LoginManager
 from flask_socketio import SocketIO, emit, join_room, leave_room, disconnect, send
 import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 @socketio.on('connect')
 def connect():
@@ -48,16 +51,19 @@ def on_leave(data):
 def ack():
 	print('message sent')
 
-@socketio.on('send_message',)
-def send_message(message):
-	user = flask.session.get('user')
-	now = datetime.datetime.now().replace(microsecond=0).isoformat()
-	send((now, user, message), callback=ack, room=room)
+@socketio.on('send_message')
+def send_message(message, user, time):
+	time = time.replace(microsecond=0).isoformat()
+	user = str(user)
+	message = user + ': ' + message + ' (' + time + ')'
+	send(message, callback=ack, broadcast=True)#, room=room)
 
 @socketio.on('message')
 def handle_message(message):
-	print('received: ' + str(message))
-	send(message, broadcast=True)
+	user = session.get('user')
+	now = datetime.datetime.now()
+	print('received: ' + str(message), user, now)
+	send_message(message, user, now)
 
 @app.route('/login/')
 def login():
@@ -66,6 +72,13 @@ def login():
 @app.route('/chat/')
 def chat():
 	return render_template('chat.html')
+
+@app.route('/')
+def index():
+	if current_user.is_authenticated:
+		return redirect(url_for('chat'))
+	else:
+		return redirect(url_for('login'))
 
 if __name__ == '__main__':
 	socketio.run(app)

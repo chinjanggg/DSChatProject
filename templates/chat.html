@@ -36,13 +36,8 @@
 		         console.log('connected');
          });
 
-         // socket.on('receive_message', function(message) {
-         //   // fetch new data from db
-         //   $(".message-area").append(message+'<br>');
-	       // });
-
          socket.on('message', function(msg) {
-           $(".message-area").append('<li>'+msg+'</li>');
+		   $(".message-area").append('<li>'+msg+'</li>');
            updateScroll();
          });
 
@@ -52,6 +47,15 @@
            $("#chat-input").val("");
          });
 
+		$('#chat-input').keypress(function(e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                console.log("Sent Message: "+$("#chat-input").val())
+				socket.send($("#chat-input").val());
+				$("#chat-input").val("");
+            }
+         });
+		 
          function updateScroll() {
            var msgDiv = document.getElementById("message-area");
            msgDiv.scrollTop = msgDiv.scrollHeight - msgDiv.clientHeight;
