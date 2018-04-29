@@ -60,7 +60,7 @@
            var msgDiv = document.getElementById("message-area");
            msgDiv.scrollTop = msgDiv.scrollHeight - msgDiv.clientHeight;
          }
-         
+
 	     });
     </script>
     <!-- end socketio-->
@@ -79,7 +79,7 @@
 
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
-              <a id="addFriend" class="btn btn-addchat">Create Chat</a>
+              <a id="createChat" class="btn btn-addchat">Create Chat</a>
               <a class="btn btn-logout">Log Out</a>
             </ul>
           </div>
@@ -93,9 +93,20 @@
       <!-- Modal content -->
       <div class="modal-content">
         <span class="close">&times;</span>
-        <p><h2>Create Chat</h2></p>
-        <div class="search-field">
-          <input type="text" id="friend-username" placeholder="username"><br><br>
+        <p align="center"><h2>Create Chat</h2></p>
+        <div class="name-field">
+          <label class="chat-name">Chat Name</label>
+          <input type="text" id="name-input" placeholder="Chat name">
+        </div>
+        <div class="friend-field">
+          <label class="friend-uname">Add Friend</label>
+          <input type="text" id="funame-input" placeholder="friend username">
+          <button id="btn-addfriend">add</button>
+        </div>
+        <div class="friendlistdiv">
+          <ul id="friendlist"></ul>
+          </div>
+        <div class="button-field">
           <a class="btn btn-create">Create</a>
         </div>
 
@@ -116,7 +127,7 @@
           message in your area
         </div>
         <div class="chat-type">
-          <input id="chat-input" type="text">
+          <input id="chat-input" type="text" placeholder="type message here">
           <a class="btn btn-sendmsg">Send</a>
         </div>
       </div>
