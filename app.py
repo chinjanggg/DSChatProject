@@ -72,14 +72,20 @@ def handle_message(message):
 	send_message(message, user, now)
 
 class User(UserMixin):
-	def set_password(self, password):
+	def __init__(self, id, name):
+		self.id = id
+		self.name = name
+	'''def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
 	def check_password(self, password):
-		return check_password_hash(self.password_hash, password)
+		return check_password_hash(self.password_hash, password)'''
 	
 @login_manager.user_loader
 def load_user(user_id):
-	return User.get(user_id)
+	inst = "select * from client where cid='" + user_id + "';"
+	cursor.execute(inst)
+	data = cursor.fetchone()
+	return User(data[0], data[1])
 	
 class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
@@ -88,20 +94,22 @@ class LoginForm(FlaskForm):
 	
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-	'''cursor.execute('select * from client')
-	data = list(cursor.fetchall())
-	print(data)
-	for d in data:
-		print(d[0])
+	cursor.execute('select * from client')
+	data = cursor.fetchone()
 	if current_user.is_authenticated:
-		return redirect(url_for('chat'))'''
+		return redirect(url_for('chat'))
 	form = LoginForm()
 	if form.validate_on_submit():
-		'''user = User.query.filter_by(username=form.username.data).first()
-		if user is None or not user.check_password(form.password.data):
-			flash('Invalid username or password')
-			return redirect(url_for('login'))'''
-		#login_user(user)
+		inst = "select * from client where cid='" + form.username.data
+		inst += "' and password='" + form.password.data + "';"
+		# password shouldn't be sent in plain-text
+		cursor.execute(inst)
+		user_entry = cursor.fetchone()
+		if user_entry is None:
+			print('invalid')
+			#flash('Invalid username or password')
+			return redirect(url_for('login'))
+		login_user(load_user(user_entry[0]))
 		return redirect(url_for('chat'))
 	return render_template('login.html', form=form)
 
