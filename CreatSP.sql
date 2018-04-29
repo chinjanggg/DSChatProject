@@ -1,4 +1,16 @@
 DELIMITER &&
+CREATE DEFINER=`root`@`localhost` PROCEDURE `createUser`(IN iName VARCHAR(255), IN iPass VARCHAR(255))
+BEGIN
+	INSERT INTO client(  
+		  DisplayName,
+          Password) 
+      VALUE(
+		iName,
+		iPass);
+END&&
+DELIMITER ;
+
+DELIMITER &&
 CREATE DEFINER=`root`@`localhost` FUNCTION `getTime`() RETURNS datetime
 BEGIN
 	RETURN now();
@@ -90,7 +102,10 @@ DELIMITER ;
 
 
 /* test
-call createGroup('00000000000000000001', 'a');
+call createUser('00000000000000000001', 'a','1');
+call createUser('00000000000000000002', 'b','2');
+
+call createGroup('00000000000000000001', 'CG1');
 
 call joinGroup('00000000000000000001','00000000000000000001');
 call joinGroup('00000000000000000002','00000000000000000001');
