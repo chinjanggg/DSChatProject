@@ -1,4 +1,5 @@
 CREATE USER 'ds_chat'@'localhost' IDENTIFIED BY 'alchemy';
+GRANT ALL PRIVILEGES ON *.* TO 'ds_chat'@'localhost';
 
 CREATE SCHEMA `ds_chat` ;
 
