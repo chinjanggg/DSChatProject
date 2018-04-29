@@ -1,6 +1,7 @@
 import functools
 from flask import Flask, session, redirect, request, render_template, url_for
 from flask_login import current_user, LoginManager, login_required, login_user, logout_user, UserMixin
+from flaskext.mysql import MySQL
 from flask_socketio import SocketIO, emit, join_room, leave_room, disconnect, send
 from flask_wtf import FlaskForm
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -15,6 +16,16 @@ socketio = SocketIO(app)
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+app.config['MYSQL_DATABASE_USER'] = 'ds_chat'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'alchemy'
+app.config['MYSQL_DATABASE_DB'] = 'ds_chat'
+mysql = MySQL()
+mysql.init_app(app)
+conn = mysql.connect()
+cursor = conn.cursor()
+#cursor.execute('select * from client')
+#data = cursor.fetchone() / cursor.fetchall()
 
 @socketio.on('connect')
 def connect():
@@ -60,13 +71,11 @@ def handle_message(message):
 	print('received: ' + str(message), user, now)
 	send_message(message, user, now)
 
-'''class User(UserMixin), db.Model):
-	# items
-	
+class User(UserMixin):
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
 	def check_password(self, password):
-		return check_password_hash(self.password_hash, password)'''
+		return check_password_hash(self.password_hash, password)
 	
 @login_manager.user_loader
 def load_user(user_id):
@@ -79,8 +88,13 @@ class LoginForm(FlaskForm):
 	
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
+	'''cursor.execute('select * from client')
+	data = list(cursor.fetchall())
+	print(data)
+	for d in data:
+		print(d[0])
 	if current_user.is_authenticated:
-		return redirect(url_for('chat'))
+		return redirect(url_for('chat'))'''
 	form = LoginForm()
 	if form.validate_on_submit():
 		'''user = User.query.filter_by(username=form.username.data).first()
