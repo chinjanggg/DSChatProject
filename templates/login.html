@@ -34,17 +34,23 @@
       <div class="logo">
         <img class="img-circle" src="{{ url_for('static', filename='img/logo.png') }}" alt="DChat" width="150px">
       </div>
-      <div class="login-form">
+      <form action ="" method="post"><div class="login-form">
         <div class="input-field">
-          <label for="username">username:</label>
+          <!--<label for="username">username:</label>
           <input type="text" id="username-login" placeholder="username" required><br>
           <label for="password">password:</label>
-          <input type="password" id="password-login" placeholder="password" required><br>
+          <input type="password" id="password-login" placeholder="password" required><br>-->
+		  {{ form.hidden_tag() }}
+		  {{ form.username.label }}
+          {{ form.username(size=20) }}<br>
+		  {{ form.password.label }}
+          {{ form.password(size=20) }}<br>
         </div>
         <div class="button-field">
-        <a class="btn btn-login" href="/chat" role="button">Login</a>
+        <!--<a class="btn btn-login" href="/chat" role="button">Login</a>-->
+		{{ form.submit() }}
         <a class="btn btn-reg" role="button">Register</a>
-      </div>
+      </div></form>
       <div id="register-form"></div>
     </div>
 
