@@ -1,37 +1,25 @@
 ﻿overall:
 > clear unused
-> change button style (if not too lazy)
 > change font-color-whatever style
 
 login page:
-> login form
-  - form sent
-> create session after login
-> register form
-  - ui
-  - form sent
 
 chat page:
-> connect session (if needed)
 > navbar
-  - set button position
   - include logo image (if not too lazy)
 > chat list
   - retrieve chat list from db (get?)
-  - show chat list (how to with ul-li ?)
+  - show chat list
        - show number of group member ?
 > message area
   - show username
   - show time
 > group
   - join group
-  - leave group
-  - create group (add function)
 
 ##################################################
 db-relate function
 > Chatlist
-> Authen
 > LoadChatBox
 > insertChatBox
 > CreateChat

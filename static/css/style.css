@@ -23,6 +23,7 @@ html {
   color: white;
 }
 .btn-reg {
+  color: blue;
   border: 2px solid blue;
 }
 .btn-reg:hover {
