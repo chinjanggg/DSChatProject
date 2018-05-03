@@ -7,7 +7,7 @@
     <title> DS Chat Web Project </title>
 
     <!--Bootstrap-->
-	<!--jQuery & Bootstrap JS-->
+    <!--jQuery & Bootstrap JS-->
     <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- Latest compiled and minified CSS -->
@@ -16,6 +16,9 @@
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/jquery.scrl.js') }}"></script>
+
+    <!--socketio-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="{{ url_for('static', filename='bootstrap/js/ie10-viewport-bug-workaround.js') }}" rel="stylesheet">
@@ -27,44 +30,8 @@
 
     <!--JavaScript-->
     <script src="{{ url_for('static', filename='js/loadData.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/message.js') }}"></script>
 
-    <!--socketio-->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-	     $(document).ready(function() {
-         var socket = io.connect('http://localhost:5000');
-         socket.on('connect', function() {
-		         console.log('connected');
-         });
-
-         socket.on('message', function(msg) {
-		   $(".message-area").append('<li>'+msg+'</li>');
-           updateScroll();
-         });
-
-         $(".btn-sendmsg").on('click', function() {
-           console.log("Sent Message: "+$("#chat-input").val())
-           socket.send($("#chat-input").val());
-           $("#chat-input").val("");
-         });
-
-		$('#chat-input').keypress(function(e) {
-            var code = e.keyCode || e.which;
-            if (code == 13) {
-                console.log("Sent Message: "+$("#chat-input").val())
-				socket.send($("#chat-input").val());
-				$("#chat-input").val("");
-            }
-         });
-		 
-         function updateScroll() {
-           var msgDiv = document.getElementById("message-area");
-           msgDiv.scrollTop = msgDiv.scrollHeight - msgDiv.clientHeight;
-         }
-
-	     });
-    </script>
-    <!-- end socketio-->
 
 
 
@@ -81,7 +48,7 @@
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
               <a id="createChat" class="btn btn-addchat">Create Chat</a>
-              <a class="btn btn-logout">Log Out</a>
+              <a class="btn btn-logout" href="/logout">Log Out</a>
             </ul>
           </div>
         </div>
