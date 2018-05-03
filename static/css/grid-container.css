@@ -56,6 +56,11 @@
 	border-color: red;
 }
 
+.leave-group {
+	float: right;
+	margin: 10px;
+}
+
 .chat.message-area {
   height: 420px;
   background-color: pink;
