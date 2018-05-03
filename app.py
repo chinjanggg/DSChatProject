@@ -1,8 +1,8 @@
 import functools
-from flask import Flask, session, redirect, request, render_template, url_for
+from flask import Flask, session, redirect, request, render_template, url_for, flash
 from flask_login import current_user, LoginManager, login_required, login_user, logout_user, UserMixin
 from flaskext.mysql import MySQL
-from flask_socketio import SocketIO, emit, join_room, leave_room, disconnect, send
+from flask_socketio import SocketIO, emit, disconnect, send
 from flask_wtf import FlaskForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField
@@ -42,31 +42,29 @@ def disconnect():
 
 @socketio.on('join')
 def on_join(data):
+	user = data['user_id']
+	group = data['group_id']
 	username = data['username']
-	room = data['room']
-	join_room(room)
-	send(username + ' has entered the room.', room=room)
+	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
+	send(username + ' has joined the group.')
 
 @socketio.on('leave')
 def on_leave(data):
+	user = data['user_id']
+	group = data['group_id']
 	username = data['username']
-	room = data['room']
-	leave_room(room)
-	send(username + ' has left the room.', room=room)
-
-def ack():
-	print('message sent')
+	cursor.execute("call leaveGroup('" + user + "', '" + group + "');")
+	send(username + ' has left the group.')
 
 @socketio.on('send_message')
 def send_message(message, user, time):
 	time = time.replace(microsecond=0).isoformat()
 	user = str(user)
-	message = user + ': ' + message + ' (' + time + ')'
-	send(message, callback=ack, broadcast=True)#, room=room)
+	emit('message', (message, user, time), broadcast=True)
 
 @socketio.on('message')
 def handle_message(message):
-	user = session.get('user')
+	user = session.get('user_display')
 	now = datetime.datetime.now()
 	print('received: ' + str(message), user, now)
 	send_message(message, user, now)
@@ -107,12 +105,14 @@ def login():
 		user_entry = cursor.fetchone()
 		if user_entry is None:
 			print('invalid')
-			#flash('Invalid username or password')
+			flash('Invalid username or password')
 			return redirect(url_for('login'))
 		user = load_user(user_entry[0])
 		login_user(user)
-		session['user'] = user_entry[1]
+		session['user_id'] = user_entry[0]
+		session['user_display'] = user_entry[1]
 		return redirect(url_for('chat'))
+		
 	return render_template('login.html', form=form)
 
 @app.route('/logout/')

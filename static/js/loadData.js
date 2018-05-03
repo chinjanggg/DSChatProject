@@ -1,6 +1,6 @@
  function loadPage(){
     loadChatList();
-    loadChatBox();
+    //loadChatBox();
   }
 
   //____CHATLIST____
