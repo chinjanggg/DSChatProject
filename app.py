@@ -44,7 +44,8 @@ def on_join(group):
 	session['group_id'] = group
 	now = datetime.datetime.now()
 	send_message(current_user.name + ' has joined the group.', 'System', now, group)
-	break_group(user, group)
+	leave_room(old_group)
+	cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
 
 @socketio.on('leave')
 def on_leave(group):
@@ -57,19 +58,20 @@ def on_leave(group):
 
 @socketio.on('switch')
 def on_switch(group):
+	user = current_user.id
 	old_group = session.get('group_id')
-	break_group(old_group)
-	cancel_break(group)
-	session['group_id'] = group
-	send_unread(current_user.id, group)
-
-def break_group(user, group):
-	leave_room(group)
-	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
-
-def cancel_break(user, group):
+	leave_room(old_group)
+	cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
 	join_room(group)
 	cursor.execute("call cancelBreak('" + user + "', '" + group + "');")
+	session['group_id'] = group
+	send_unread(user, group)
+	
+@socketio.on('break')
+def on_break():
+	old_group = session.get('group_id')
+	leave_room(old_group)
+	cursor.execute("call breakGroup('" + current_user.id + "', '" + old_group + "');")
 
 def send_message(message, user, time, group):
 	time = time.replace(microsecond=0).isoformat()
@@ -138,9 +140,6 @@ def login():
 @app.route('/logout/')
 @login_required
 def logout():
-	user = current_user.id
-	group = session.get('group_id')
-	#break_group(user, group)
 	logout_user()
 	session['group_id'] = 'x'
 	return redirect('/')
@@ -156,12 +155,13 @@ class CreateGroupForm(FlaskForm):
 def chat():
 	form = CreateGroupForm()
 	if form.validate_on_submit():
+		group_id = form.group_id.data
 		cursor.execute('select GID from CGroup;')
 		for entry in cursor.fetchall():
-			if entry[0] == form.group_id.data:
+			if entry[0] == group_id:
 				flash('Duplicated group ID')
 				return render_template('chat.html', form=form)
-		cursor.execute("call createGroup('" + form.group_id.data + "', '" + form.group_name.data + "');")
+		cursor.execute("call createGroup('" + group_id + "', '" + form.group_name.data + "');")
 		conn.commit()
 	return render_template('chat.html', form=form)
 
