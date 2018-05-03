@@ -116,7 +116,7 @@ class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
 	password = PasswordField('Password', validators=[DataRequired()])
 	submit = SubmitField('Login')
-
+	
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
 	if current_user.is_authenticated:
@@ -133,8 +133,6 @@ def login():
 				return redirect(url_for('chat'))
 		print('invalid')
 		flash('Invalid username or password')
-		return redirect(url_for('login'))
-
 	return render_template('login.html', form=form)
 
 @app.route('/logout/')
@@ -144,13 +142,36 @@ def logout():
 	session['group_id'] = 'x'
 	return redirect('/')
 
+class RegisterForm(FlaskForm):
+	reg_username = StringField('Username', validators=[DataRequired()])
+	reg_dpname = StringField('Display Name', validators=[DataRequired()])
+	reg_password = PasswordField('Password', validators=[DataRequired()])
+	reg_repassword = PasswordField('Reenter Password', validators=[DataRequired()])
+	submit = SubmitField('Register')
+	
+@app.route('/register/', methods=['GET', 'POST')
+def register():
+	form = RegisterForm()
+	if form.validate_on_submit():
+		if form.reg_password.data != form.reg_repassword.data:
+			flash('Passwords not matched')
+			return render_template('register.html', form=form)
+		username = form.reg_username.data
+		cursor.execute('select CID from Client;')
+		for entry in cursor.fetchall():
+			if entry[0] == username:
+				flash('Duplicated username')
+				return render_template('register.html', form=form)
+		cursor.execute("call createUser('" + username + "', '" + form.reg_dpname.data + "', '" + form.reg_password.data + "');")
+		conn.commit()
+	return render_template('register.html', form=form)
+	
 class CreateGroupForm(FlaskForm):
 	group_id = StringField('Group ID', validators=[DataRequired()])
 	group_name = StringField('Group Name', validators=[DataRequired()])
 	submit = SubmitField('Create')
 	
 @app.route('/chat/', methods=['GET', 'POST'])
-@app.route('/chat/')
 @login_required
 def chat():
 	form = CreateGroupForm()
