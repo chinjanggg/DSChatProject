@@ -16,14 +16,13 @@
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/jquery.scrl.js') }}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{{ url_for('static', filename='bootstrap/js/ie10-viewport-bug-workaround.js') }}" rel="stylesheet">
 
     <!--socketio-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
 
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="{{ url_for('static', filename='bootstrap/js/ie10-viewport-bug-workaround.js') }}" rel="stylesheet">
-
-    <!-- Web CSS-->
+    <!--CSS-->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/grid-container.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet">
@@ -32,12 +31,10 @@
     <script src="{{ url_for('static', filename='js/loadData.js') }}"></script>
     <script src="{{ url_for('static', filename='js/message.js') }}"></script>
 
-
-
-
   </head>
 
   <body onload="loadPage()">
+    <!-- navbar -->
     <div class="navbar">
       <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -54,11 +51,11 @@
         </div>
       </nav>
     </div>
+    <!-- end navbar -->
 
-    <!-- The Modal -->
+    <!-- modal -->
     <div id="myModal" class="modal">
 
-      <!-- Modal content -->
       <div class="modal-content">
         <span class="close">&times;</span>
         <p align="center"><h2>Create Chat</h2></p>
@@ -81,15 +78,13 @@
       </div>
 
     </div>
-    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
     <!-- end modal -->
 
     <div class="grid-container">
 
       <div class="list">
-        <div id="chat-list" class="chat-list-container">
-          <div class="chat-list-head"> Chatlist </div>
-        </div>
+        <div class="chat-list-head"> Chatlist </div>
+        <div id="chat-list" class="chat-list-container"></div>
       </div>
 
       <div class="chat">
@@ -101,13 +96,10 @@
         </div>
       </div>
 
-
     </div>
 
+    <!-- modal for create group -->
+    <script src="{{ url_for('static', filename='js/group-modal.js') }}"></script>
 
-
-
-</body>
-
-
+  </body>
 </html>

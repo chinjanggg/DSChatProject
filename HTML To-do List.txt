@@ -23,6 +23,10 @@ chat page:
 > message area
   - show username
   - show time
+> group
+  - join group
+  - leave group
+  - create group (add function)
 
 ##################################################
 db-relate function

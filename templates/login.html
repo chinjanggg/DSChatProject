@@ -22,6 +22,7 @@
 
     <!-- Web CSS-->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
 
     <!-- Web JavaScript-->
     <script src="{{ url_for('static', filename='js/load-regform.js') }}"></script>
@@ -30,29 +31,24 @@
 
   <body>
 
-    <div class="index-container">
+    <div class="container">
+    <div class="register">
+      <a class="btn btn-reg" role="button">Register</a>
+    </div>
       <div class="logo">
         <img class="img-circle" src="{{ url_for('static', filename='img/logo.png') }}" alt="DChat" width="150px">
       </div>
-      <form action ="" method="post"><div class="login-form">
-        <div class="input-field">
-          <!--<label for="username">username:</label>
-          <input type="text" id="username-login" placeholder="username" required><br>
-          <label for="password">password:</label>
-          <input type="password" id="password-login" placeholder="password" required><br>-->
-		  {{ form.hidden_tag() }}
-		  {{ form.username.label }}
-          {{ form.username(size=20) }}<br>
-		  {{ form.password.label }}
-          {{ form.password(size=20) }}<br>
-        </div>
-        <div class="button-field">
-        <!--<a class="btn btn-login" href="/chat" role="button">Login</a>-->
-		{{ form.submit() }}
-        <a class="btn btn-reg" role="button">Register</a>
-      </div></form>
+      <div class="login-form">
+        <form action ="" method="POST">
+		        {{ form.hidden_tag() }}
+            {{ form.username.label }}
+            {{ form.username(size=20) }} <br>
+            {{ form.password.label }}
+            {{ form.password(size=20) }} <br>
+            {{ form.submit() }}
+        </form>
+      </div>
       <div id="register-form"></div>
-    </div>
 
   </body>
 </html>
