@@ -117,25 +117,21 @@ class LoginForm(FlaskForm):
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-	cursor.execute('select * from client')
-	data = cursor.fetchone()
 	if current_user.is_authenticated:
 		return redirect(url_for('chat'))
 	form = LoginForm()
-	if form.validate_on_submit():
-		inst = "select * from client where cid='" + form.username.data
-		inst += "' and password='" + form.password.data + "';"
+	if form.validate_on_submit():		
 		# password shouldn't be sent in plain-text
-		cursor.execute(inst)
-		user_entry = cursor.fetchone()
-		if user_entry is None:
-			print('invalid')
-			flash('Invalid username or password')
-			return redirect(url_for('login'))
-		user = load_user(user_entry[0])
-		login_user(user)
-		session['group_id'] = 'x'
-		return redirect(url_for('chat'))
+		cursor.execute('select CID, Password from Client;')
+		temp = cursor.fetchall()
+		for entry in temp:
+			if entry[0] == form.username.data and entry[1] == form.password.data:
+				login_user(load_user(form.username.data))
+				session['group_id'] = 'x'
+				return redirect(url_for('chat'))
+		print('invalid')
+		flash('Invalid username or password')
+		return redirect(url_for('login'))
 
 	return render_template('login.html', form=form)
 
@@ -144,7 +140,7 @@ def login():
 def logout():
 	user = current_user.id
 	group = session.get('group_id')
-	break_group(user, group)
+	#break_group(user, group)
 	logout_user()
 	session['group_id'] = 'x'
 	return redirect('/')
@@ -160,6 +156,11 @@ class CreateGroupForm(FlaskForm):
 def chat():
 	form = CreateGroupForm()
 	if form.validate_on_submit():
+		cursor.execute('select GID from CGroup;')
+		for entry in cursor.fetchall():
+			if entry[0] == form.group_id.data:
+				flash('Duplicated group ID')
+				return render_template('chat.html', form=form)
 		cursor.execute("call createGroup('" + form.group_id.data + "', '" + form.group_name.data + "');")
 		conn.commit()
 	return render_template('chat.html', form=form)
