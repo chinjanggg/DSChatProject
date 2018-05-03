@@ -59,22 +59,12 @@
       <div class="modal-content">
         <span class="close">&times;</span>
         <p align="center"><h2>Create Chat</h2></p>
-        <div class="name-field">
-          <label class="chat-name">Chat Name</label>
-          <input type="text" id="name-input" placeholder="Chat name">
-        </div>
-        <div class="friend-field">
-          <label class="friend-uname">Add Friend</label>
-          <input type="text" id="funame-input" placeholder="friend username">
-          <button id="btn-addfriend">add</button>
-        </div>
-        <div class="friendlistdiv">
-          <ul id="friendlist"></ul>
-          </div>
-        <div class="button-field">
-          <a class="btn btn-create">Create</a>
-        </div>
-
+        <form action="" method="POST">
+          {{ form.hidden_tag() }}
+          {{ form.chatname.label }}
+          {{ form.chatname(size=20) }}
+          {{ form.create() }}
+        </form>
       </div>
 
     </div>
