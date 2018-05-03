@@ -2,7 +2,7 @@ import functools
 from flask import Flask, session, redirect, request, render_template, url_for, flash
 from flask_login import current_user, LoginManager, login_required, login_user, logout_user, UserMixin
 from flaskext.mysql import MySQL
-from flask_socketio import SocketIO, emit, disconnect, send
+from flask_socketio import SocketIO, emit, disconnect, send, join_room, leave_room
 from flask_wtf import FlaskForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField
@@ -24,8 +24,6 @@ mysql = MySQL()
 mysql.init_app(app)
 conn = mysql.connect()
 cursor = conn.cursor()
-#cursor.execute('select * from client')
-#data = cursor.fetchone() / cursor.fetchall()
 
 @socketio.on('connect')
 def connect():
@@ -41,33 +39,63 @@ def disconnect():
     print('Client disconnected')
 
 @socketio.on('join')
-def on_join(data):
-	user = data['user_id']
-	group = data['group_id']
-	username = data['username']
+def on_join(group):
+	user = session.get('user_id')
+	username = session.get('user_display')
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
-	send(username + ' has joined the group.')
+	join_room(group)
+	session['group_id'] = group
+	send(username + ' has joined the group.', broadcast=True, room=group)
+	break_group(user, group)
 
 @socketio.on('leave')
-def on_leave(data):
-	user = data['user_id']
-	group = data['group_id']
-	username = data['username']
+def on_leave(group):
+	user = session.get('user_id')
+	username = session.get('user_display')
 	cursor.execute("call leaveGroup('" + user + "', '" + group + "');")
-	send(username + ' has left the group.')
+	leave_room(group)
+	session['group_id'] = 'x'
+	send(username + ' has left the group.', broadcast=True, room=group)
+	
+@socketio.on('switch')
+def on_switch(group):
+	user = session.get('user_id')
+	old_group = session.get('group_id')
+	break_group(old_group)
+	cancel_break(group)
+	session['group_id'] = group
+	send_unread(user, group)
+	
+def break_group(user, group):
+	leave_room(group)
+	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
+	
+def cancel_break(user, group):
+	join_room(group)
+	cursor.execute("call cancelBreak('" + user + "', '" + group + "');")
 
-@socketio.on('send_message')
-def send_message(message, user, time):
+def send_message(message, user, time, group):
 	time = time.replace(microsecond=0).isoformat()
-	user = str(user)
-	emit('message', (message, user, time), broadcast=True)
+	emit('message', (message, user, time), broadcast=True, room=group)
 
 @socketio.on('message')
 def handle_message(message):
-	user = session.get('user_display')
+	user = session.get('user_id')
+	user_display = session.get('user_display')
+	group = session.get('group')
 	now = datetime.datetime.now()
 	print('received: ' + str(message), user, now)
-	send_message(message, user, now)
+	send_message(message, user_display, now, group)
+	cursor.execute("call storeMessage('" + user + "', '" + group + "', '" + message + "');")
+
+def send_unread():
+	cursor.execute("call getUnread('" + user + "', '" + group + "');")
+	unread = cursor.fetchall()
+	for msg in unread:
+		time = msg[1].replace(microsecond=0).isoformat()
+		cursor.execute("select DisplayName from Client where CID = '" + msg[3] + "';")
+		user = cursor.fetchone()
+		send_message(msg[2], user, time, group)
 
 class User(UserMixin):
 	def __init__(self, id, name):
@@ -111,6 +139,7 @@ def login():
 		login_user(user)
 		session['user_id'] = user_entry[0]
 		session['user_display'] = user_entry[1]
+		session['group_id'] = 'x'
 		return redirect(url_for('chat'))
 		
 	return render_template('login.html', form=form)
@@ -118,8 +147,12 @@ def login():
 @app.route('/logout/')
 @login_required
 def logout():
+	user = session.get('user_id')
+	group = session.get('group_id')
+	break_group(user, group)
 	logout_user()
 	session['user'] = None
+	session['group_id'] = 'x'
 	return redirect('/')
 	
 @app.route('/chat/')
