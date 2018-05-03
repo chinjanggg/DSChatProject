@@ -17,8 +17,8 @@ login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-app.config['MYSQL_DATABASE_USER'] = 'ds_chat'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'alchemy'
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'JJand9303isloved'
 app.config['MYSQL_DATABASE_DB'] = 'ds_chat'
 mysql = MySQL()
 mysql.init_app(app)
@@ -54,7 +54,7 @@ def on_leave(group):
 	cursor.execute("call leaveGroup('" + user + "', '" + group + "');")
 	leave_room(group)
 	session['group_id'] = 'x'
-	
+
 @socketio.on('switch')
 def on_switch(group):
 	old_group = session.get('group_id')
@@ -62,11 +62,11 @@ def on_switch(group):
 	cancel_break(group)
 	session['group_id'] = group
 	send_unread(current_user.id, group)
-	
+
 def break_group(user, group):
 	leave_room(group)
 	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
-	
+
 def cancel_break(user, group):
 	join_room(group)
 	cursor.execute("call cancelBreak('" + user + "', '" + group + "');")
@@ -102,19 +102,19 @@ class User(UserMixin):
 		self.password_hash = generate_password_hash(password)
 	def check_password(self, password):
 		return check_password_hash(self.password_hash, password)'''
-	
+
 @login_manager.user_loader
 def load_user(user_id):
 	inst = "select * from client where cid='" + user_id + "';"
 	cursor.execute(inst)
 	data = cursor.fetchone()
 	return User(data[0], data[1])
-	
+
 class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
 	password = PasswordField('Password', validators=[DataRequired()])
 	submit = SubmitField('Login')
-	
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
 	cursor.execute('select * from client')
@@ -136,7 +136,7 @@ def login():
 		login_user(user)
 		session['group_id'] = 'x'
 		return redirect(url_for('chat'))
-		
+
 	return render_template('login.html', form=form)
 
 @app.route('/logout/')
@@ -149,12 +149,16 @@ def logout():
 	session['group_id'] = 'x'
 	return redirect('/')
 
+<<<<<<< HEAD
 class CreateGroupForm(FlaskForm):
 	group_id = StringField('Group ID', validators=[DataRequired()])
 	group_name = StringField('Group Name', validators=[DataRequired()])
 	submit = SubmitField('Create')
 	
 @app.route('/chat/', methods=['GET', 'POST'])
+=======
+@app.route('/chat/')
+>>>>>>> e74f2ad734823c4ef7fc7ffb425915dfa7ce4aa7
 @login_required
 def chat():
 	form = CreateGroupForm()
