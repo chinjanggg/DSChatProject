@@ -1,0 +1,12 @@
+createUser
+
+createGroup
+joinGroup
+leaveGroup
+
+storeMessage
+getMessage
+
+breakGroup
+getUnread
+cancelBreak
