@@ -1,6 +1,6 @@
 $(document).ready(function() {
   $(".btn-logout").on('click', function() {
-    emit('break', {}, broadcast=True, room=group);
+    emit('break', {});
     console.log('log out');
   });
 });
