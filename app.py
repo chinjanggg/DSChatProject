@@ -28,9 +28,7 @@ cursor = conn.cursor()
 @socketio.on('connect')
 def connect():
 	if current_user.is_authenticated:
-		emit('my response',
-		{'message': '{0} has joined'.format(current_user.name)},
-		broadcast=True)
+		print('{0} has joined'.format(current_user.name))
 	else:
 		return render_template('login.html')
 
@@ -40,31 +38,30 @@ def disconnect():
 
 @socketio.on('join')
 def on_join(group):
-	user = session.get('user_id')
-	username = session.get('user_display')
+	user = current_user.id
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
 	join_room(group)
 	session['group_id'] = group
-	send(username + ' has joined the group.', broadcast=True, room=group)
+	now = datetime.datetime.now()
+	send_message(current_user.name + ' has joined the group.', 'System', now, group)
 	break_group(user, group)
 
 @socketio.on('leave')
 def on_leave(group):
-	user = session.get('user_id')
-	username = session.get('user_display')
+	user = current_user.id
+	now = datetime.datetime.now()
+	send_message(current_user.name + ' has left the group.', 'System', now, session.get(group_id))
 	cursor.execute("call leaveGroup('" + user + "', '" + group + "');")
 	leave_room(group)
 	session['group_id'] = 'x'
-	send(username + ' has left the group.', broadcast=True, room=group)
 	
 @socketio.on('switch')
 def on_switch(group):
-	user = session.get('user_id')
 	old_group = session.get('group_id')
 	break_group(old_group)
 	cancel_break(group)
 	session['group_id'] = group
-	send_unread(user, group)
+	send_unread(current_user.id, group)
 	
 def break_group(user, group):
 	leave_room(group)
@@ -76,16 +73,16 @@ def cancel_break(user, group):
 
 def send_message(message, user, time, group):
 	time = time.replace(microsecond=0).isoformat()
+	user = string(user)
 	emit('message', (message, user, time), broadcast=True, room=group)
 
 @socketio.on('message')
 def handle_message(message):
-	user = session.get('user_id')
-	user_display = session.get('user_display')
+	user = current_user.id
 	group = session.get('group')
 	now = datetime.datetime.now()
 	print('received: ' + str(message), user, now)
-	send_message(message, user_display, now, group)
+	send_message(message, current_user.name, now, group)
 	cursor.execute("call storeMessage('" + user + "', '" + group + "', '" + message + "');")
 
 def send_unread():
@@ -137,8 +134,6 @@ def login():
 			return redirect(url_for('login'))
 		user = load_user(user_entry[0])
 		login_user(user)
-		session['user_id'] = user_entry[0]
-		session['user_display'] = user_entry[1]
 		session['group_id'] = 'x'
 		return redirect(url_for('chat'))
 		
@@ -147,11 +142,10 @@ def login():
 @app.route('/logout/')
 @login_required
 def logout():
-	user = session.get('user_id')
+	user = current_user.id
 	group = session.get('group_id')
-	break_group(user, group)
+	#break_group(user, group)
 	logout_user()
-	session['user'] = None
 	session['group_id'] = 'x'
 	return redirect('/')
 	
