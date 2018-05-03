@@ -9,19 +9,36 @@ html {
 
 /* button */
 .btn {
-  background-color: lightgrey;
+  background-color: Transparent;
   display: inline-block;
   border-radius: 0.25rem;
-  /* border: 2px solid black; */
-  color: black;
+  border: 2px solid;
+  color: lightgrey;
   -webkit-transition-duration: 0.2s; /* Safari */
   transition-duration: 0.2s;
   margin-left: 2px;
   margin-right: 2px;
 }
 .btn:hover {
-  color: black;
-  opacity: 0.8;
+  color: white;
+}
+.btn-reg {
+  border: 2px solid blue;
+}
+.btn-reg:hover {
+  background-color: blue;
+}
+.btn-addchat {
+  border: 2px solid green;
+}
+.btn-addchat:hover {
+  background-color: green;
+}
+.btn-logout {
+  border: 2px solid red;
+}
+.btn-logout:hover {
+  background-color: red;
 }
 
 .navbar {
@@ -30,4 +47,7 @@ html {
 }
 div.navbar {
   width: 80%;
+}
+.navbar-collapse {
+  margin-top: 8px;
 }
