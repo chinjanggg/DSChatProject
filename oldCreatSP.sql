@@ -72,13 +72,11 @@ CREATE PROCEDURE joinGroup (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
 	INSERT INTO clientingroup(  
 		  CID,
-		  GID,
-          StartMID
+		  GID
           ) 
       VALUE(
 		iCID,
-		iGID,
-        getLastMID());
+		iGID);
 END //
 DELIMITER ;
 
@@ -115,16 +113,8 @@ CREATE PROCEDURE getMessage (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
 
 		IF (SELECT EXISTS(SELECT * FROM break b WHERE b.CID=iCID and b.GID=iGID))
-		THEN 	SELECT M.MID, M.Timestamp, M.Text, M.GID, M.CID 
-				FROM message M, break b 
-                WHERE M.GID = iGID and b.MID >= M.MID and M.MID > 
-				(SELECT cig.StartMID FROM clientingroup cig where cig.GID=iGID and cig.CID=iCID);
-        
-        ELSE SELECT M.MID, M.Timestamp, M.Text, M.GID, M.CID 
-			FROM message M
-			WHERE M.GID = iGID and M.MID > 
-            (SELECT cig.StartMID FROM clientingroup cig where cig.GID=iGID and cig.CID=iCID);
-	
+		THEN  SELECT M.MID, M.Timestamp, M.Text, M.GID, M.CID FROM message M, break b WHERE M.GID = iGID and b.MID >= M.MID;
+        ELSE SELECT * FROM message M WHERE M.GID = iGID;
         END IF;
 END //
 DELIMITER ;
@@ -163,3 +153,5 @@ call cancelBreak('user1','GID1');
 call getMessage('user1','GID1');
 
 call leaveGroup('user1','GID1');
+
+

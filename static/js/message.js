@@ -17,7 +17,7 @@ $(document).ready(function() {
   });
 
   //send message when hit enter
-  $('#chat-input').keypress(function(e) {
+  $("#chat-input").keypress(function(e) {
     var code = e.keyCode || e.which;
     if (code == 13) {
       sendMessage();
@@ -25,7 +25,7 @@ $(document).ready(function() {
   });
 
   function sendMessage() {
-    console.log("Sent Message: "+$("#chat-input").val())
+    console.log("Sent Message: "+$("#chat-input").val());
     socket.send($("#chat-input").val());
     $("#chat-input").val("");
   }
