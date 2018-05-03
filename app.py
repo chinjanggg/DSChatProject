@@ -35,7 +35,7 @@ def connect():
 @socketio.on('disconnect')
 def disconnect():
     print('Client disconnected')
-
+	
 @socketio.on('join')
 def on_join(group):
 	user = current_user.id
@@ -144,15 +144,24 @@ def login():
 def logout():
 	user = current_user.id
 	group = session.get('group_id')
-	#break_group(user, group)
+	break_group(user, group)
 	logout_user()
 	session['group_id'] = 'x'
 	return redirect('/')
+
+class CreateGroupForm(FlaskForm):
+	group_id = StringField('Group ID', validators=[DataRequired()])
+	group_name = StringField('Group Name', validators=[DataRequired()])
+	submit = SubmitField('Create')
 	
-@app.route('/chat/')
+@app.route('/chat/', methods=['GET', 'POST'])
 @login_required
 def chat():
-	return render_template('chat.html')
+	form = CreateGroupForm()
+	if form.validate_on_submit():
+		cursor.execute("call createGroup('" + form.group_id.data + "', '" + form.group_name.data + "');")
+		conn.commit()
+	return render_template('chat.html', form=form)
 
 @app.route('/')
 def index():
