@@ -17,8 +17,8 @@ login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'JJand9303isloved'
+app.config['MYSQL_DATABASE_USER'] = 'ds_chat'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'alchemy'
 app.config['MYSQL_DATABASE_DB'] = 'ds_chat'
 mysql = MySQL()
 mysql.init_app(app)
