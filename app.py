@@ -149,7 +149,7 @@ class RegisterForm(FlaskForm):
 	reg_repassword = PasswordField('Reenter Password', validators=[DataRequired()])
 	submit = SubmitField('Register')
 	
-@app.route('/register/', methods=['GET', 'POST')
+@app.route('/register/', methods=['GET', 'POST'])
 def register():
 	form = RegisterForm()
 	if form.validate_on_submit():
@@ -164,6 +164,7 @@ def register():
 				return render_template('register.html', form=form)
 		cursor.execute("call createUser('" + username + "', '" + form.reg_dpname.data + "', '" + form.reg_password.data + "');")
 		conn.commit()
+		return redirect('/')
 	return render_template('register.html', form=form)
 	
 class CreateGroupForm(FlaskForm):
