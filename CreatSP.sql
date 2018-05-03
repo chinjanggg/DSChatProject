@@ -1,7 +1,6 @@
 DELIMITER &&
 CREATE DEFINER=`root`@`localhost` PROCEDURE `createUser`(IN iCID VarChar(20), IN iName VARCHAR(255), IN iPass VARCHAR(255))
-BEGIN
-	INSERT INTO client( 
+BEGIN	INSERT INTO client( 
 		CID,
 		DisplayName,
 		Password) 
@@ -82,6 +81,13 @@ END //
 DELIMITER ;
 
 DELIMITER //
+CREATE PROCEDURE leaveGroup (IN iCID VarChar(20), IN iGID VarChar(20))
+BEGIN
+	DELETE FROM clientingroup WHERE CID=iCID and GID=iGID; 
+    END //
+DELIMITER ;
+
+DELIMITER //
 CREATE PROCEDURE createGroup (IN iGID VarChar(20), IN iName VarChar(255))
 BEGIN
 	INSERT INTO cgroup(  
@@ -102,26 +108,46 @@ BEGIN
 END //
 DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE getMessage (IN iCID VarChar(20), IN iGID VarChar(20))
+BEGIN
+
+		IF (SELECT EXISTS(SELECT * FROM break b WHERE b.CID=iCID and b.GID=iGID))
+		THEN  SELECT M.MID, M.Timestamp, M.Text, M.GID, M.CID FROM message M, break b WHERE M.GID = iGID and b.MID >= M.MID;
+        ELSE SELECT * FROM message M WHERE M.GID = iGID;
+        END IF;
+END //
+DELIMITER ;
 
 
-call createUser('00000000000000000001','a','1');
-call createUser('00000000000000000002','b','2');
+#test createuser
+call createUser('user1','a','1');
+call createUser('user2','b','2');
 
-call createGroup('00000000000000000001', 'CG1');
+call createGroup('GID1', 'CG1');
 
-call joinGroup('00000000000000000001','00000000000000000001');
-call joinGroup('00000000000000000002','00000000000000000001');
+call joinGroup('user1','GID1');
+call joinGroup('user2','GID1');
 
-call createGroup('00000000000000000002', 'b');
-call storeMessage('00000000000000000001','00000000000000000001','a test1');
-call storeMessage('00000000000000000002','00000000000000000001','b test2');
+call createGroup('GID2', 'cg2');
+call storeMessage('user1','GID1','a test1');
+call storeMessage('user2','GID1','b test2');
 
-call breakGroup('00000000000000000001','00000000000000000001');
+call getMessage('user1','GID1');
+call getMessage('user2','GID1');
 
-call storeMessage('00000000000000000002','00000000000000000001','b test3');
-call storeMessage('00000000000000000002','00000000000000000001','b test4');
-call getUnread('00000000000000000001', '00000000000000000001');
+# test break
+call breakGroup('user1','GID1');
 
+call storeMessage('user2','GID1','b test3');
+call storeMessage('user2','GID1','b test4');
 
-call cancelBreak('00000000000000000001','00000000000000000001');
+# user1 should get 123 user2 get 1234
+call getMessage('user1','GID1');
+call getMessage('user2','GID1');
+#user1 get 4
+call getUnread('user1','GID1');
 
+call cancelBreak('user1','GID1');
+# now user1 get 1234
+call getMessage('user1','GID1');
