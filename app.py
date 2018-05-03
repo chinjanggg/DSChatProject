@@ -39,12 +39,18 @@ def disconnect():
 @socketio.on('join')
 def on_join(group):
 	user = current_user.id
+	cursor.execute('select GID from CGroup;')
+	found = False
+	for entry in cursor.fetchall():
+		if entry[0] == group:
+			found = True
+	if not found:
+		flash('Group ID not found')
+		redirect(url_for('chat'))
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
-	join_room(group)
 	session['group_id'] = group
 	now = datetime.datetime.now()
 	send_message(current_user.name + ' has joined the group.', 'System', now, group)
-	leave_room(old_group)
 	cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
 
 @socketio.on('leave')
@@ -60,8 +66,9 @@ def on_leave(group):
 def on_switch(group):
 	user = current_user.id
 	old_group = session.get('group_id')
-	leave_room(old_group)
-	cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
+	if old_group != 'x':
+		leave_room(old_group)
+		cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
 	join_room(group)
 	cursor.execute("call cancelBreak('" + user + "', '" + group + "');")
 	session['group_id'] = group
@@ -125,8 +132,7 @@ def login():
 	if form.validate_on_submit():		
 		# password shouldn't be sent in plain-text
 		cursor.execute('select CID, Password from Client;')
-		temp = cursor.fetchall()
-		for entry in temp:
+		for entry in cursor.fetchall():
 			if entry[0] == form.username.data and entry[1] == form.password.data:
 				login_user(load_user(form.username.data))
 				session['group_id'] = 'x'
