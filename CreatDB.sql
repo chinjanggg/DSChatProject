@@ -1,5 +1,6 @@
 CREATE USER 'ds_chat'@'localhost' IDENTIFIED BY 'alchemy';
-GRANT ALL PRIVILEGES ON *.* TO 'ds_chat'@'localhost';
+REVOKE ALL PRIVILEGES, grant option from 'ds_chat'@'localhost';
+GRANT ALL PRIVILEGES ON ds_chat.* TO 'ds_chat'@'localhost';
 
 CREATE SCHEMA `ds_chat` ;
 
