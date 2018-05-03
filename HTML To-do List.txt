@@ -5,8 +5,6 @@
 login page:
 
 chat page:
-> navbar
-  - include logo image (if not too lazy)
 > chat list
   - retrieve chat list from db (get?)
   - show chat list
@@ -14,8 +12,6 @@ chat page:
 > message area
   - show username
   - show time
-> group
-  - join group
 
 ##################################################
 db-relate function
