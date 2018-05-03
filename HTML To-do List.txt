@@ -10,12 +10,10 @@ chat page:
   - show chat list
        - show number of group member ?
 > message area
-  - show username
-  - show time
+  - show template
 
 ##################################################
 db-relate function
 > Chatlist
 > LoadChatBox
 > insertChatBox
-> CreateChat
