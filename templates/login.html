@@ -23,10 +23,8 @@
     <!-- Web CSS-->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet">
 
     <!-- Web JavaScript-->
-    <script src="{{ url_for('static', filename='js/load-regform.js') }}"></script>
 
   </head>
 
@@ -49,34 +47,6 @@
             {{ form.submit() }}
         </form>
       </div>
-
-      <!-- register modal -->
-      <div id="myModal" class="modal">
-
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <p align="center"><h2>Register New Account</h2></p>
-          <form action="" method="POST">
-            {{ form.hidden_tag() }}
-            {{ form.reg_username.label }}
-            {{ form.reg_username(size=20) }}<br>
-            {{ form.reg_dpname.label }}
-            {{ form.reg_dpname(size=20) }}<br>
-            {{ form.reg_password.label }}
-            {{ form.reg_password(size=20) }}<br>
-            {{ form.reg_repassword.label }}
-            {{ form.reg_repassword(size=20) }}<br>
-            {{ form.submit() }}
-          </form>
-        </div>
-
-      </div>
-      <!-- end modal -->
-
-
-
-      <!-- modal for register -->
-      <script src="{{ url_for('static', filename='js/reg-modal.js') }}"></script>
 
   </body>
 </html>

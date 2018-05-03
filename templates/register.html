@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title> DS Chat Web Project </title>
+
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+  </head>
+
+  <body>
+    <p align="center"><h2>Register New Account</h2></p>
+    <form action="" method="POST">
+      {{ form.hidden_tag() }}
+      {{ form.reg_username.label }}
+      {{ form.reg_username(size=20) }}<br>
+      {{ form.reg_dpname.label }}
+      {{ form.reg_dpname(size=20) }}<br>
+      {{ form.reg_password.label }}
+      {{ form.reg_password(size=20) }}<br>
+      {{ form.reg_repassword.label }}
+      {{ form.reg_repassword(size=20) }}<br>
+      {{ form.submit() }}
+    </form>
+  </body>
+</html>
