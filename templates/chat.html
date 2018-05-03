@@ -31,6 +31,7 @@
     <script src="{{ url_for('static', filename='js/loadData.js') }}"></script>
     <script src="{{ url_for('static', filename='js/message.js') }}"></script>
     <script src="{{ url_for('static', filename='js/logout.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/join-group.js') }}"></script>
 
   </head>
 
@@ -45,6 +46,8 @@
 
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
+              <input id="gid-input" type="text" placeholder="group id">
+              <button id="join-group">Join</button>
               <a id="createChat" class="btn btn-addchat">Create Chat</a>
               <a class="btn btn-logout" href="/logout">Log Out</a>
             </ul>
