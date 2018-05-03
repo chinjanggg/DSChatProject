@@ -11,10 +11,6 @@ $(document).ready(function() {
     $(".message-area").append('<li>'+msg+'</li>');
     updateScroll();
   });
-  //send message when click
-  $(".btn-sendmsg").on('click', function() {
-    sendMessage();
-  });
 
   //send message when hit enter
   $("#chat-input").keypress(function(e) {

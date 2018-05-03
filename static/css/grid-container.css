@@ -96,7 +96,7 @@
 
 .chat-type {
   position: fixed;
-  width: 43%;
+  width: 41%;
   height: 8%;
   bottom: 15px;
   margin-top: -10px;
@@ -104,10 +104,6 @@
 }
 
 input#chat-input {
-  width: 87%;
+  width: 100%;
   height: 70%;
-}
-
-button.btn-sendmsg {
-	padding: 5px;
 }
