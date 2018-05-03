@@ -149,16 +149,13 @@ def logout():
 	session['group_id'] = 'x'
 	return redirect('/')
 
-<<<<<<< HEAD
 class CreateGroupForm(FlaskForm):
 	group_id = StringField('Group ID', validators=[DataRequired()])
 	group_name = StringField('Group Name', validators=[DataRequired()])
 	submit = SubmitField('Create')
 	
 @app.route('/chat/', methods=['GET', 'POST'])
-=======
 @app.route('/chat/')
->>>>>>> e74f2ad734823c4ef7fc7ffb425915dfa7ce4aa7
 @login_required
 def chat():
 	form = CreateGroupForm()
