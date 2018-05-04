@@ -49,7 +49,7 @@ def on_join(data):
 			found = True
 			break
 	if not found:
-		flash('Group ID not found')
+		#flash('Group ID not found')
 		return redirect(url_for('chat'))
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
 	now = datetime.datetime.now()
@@ -113,7 +113,7 @@ def handle_message(message):
 	send_message(message, session['user_name'], now, group)
 	if str(group) == 'None' or str(group) == 'x':
 		print('group not found')
-		flash('Group not found')
+		#flash('Group not found')
 		cursor.close()
 		return
 	cursor.execute("call storeMessage('" + user + "', '" + group + "', '" + re.escape(message) + "');")
