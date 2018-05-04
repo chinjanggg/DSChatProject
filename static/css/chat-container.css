@@ -7,7 +7,7 @@
 	margin: 0 auto;
   height: 91%;
   background-color: rgba(255, 255, 255, 0.8);
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .row:after {
@@ -31,7 +31,7 @@
 
 .chat-list-container {
 	overflow: auto;
-	/* height: 650px; */
+	height: 90%;
 }
 
 .chat-list-head {
