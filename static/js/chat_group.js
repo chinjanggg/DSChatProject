@@ -5,7 +5,6 @@ $(document).ready(function() {
     socket.emit('switch', {'group': this.id});
     showGrName(this.id);
     reloadChat();
-    console.log("printed")
   });
 
 });
@@ -23,5 +22,4 @@ function getUserName(){
 function reloadChat() {
     var wait = document.getElementById('waited-msg').innerHTML;
     document.getElementById('message-area').innerHTML = wait;
-    console.log("display")
 }

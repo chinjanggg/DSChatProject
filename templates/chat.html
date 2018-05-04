@@ -102,12 +102,8 @@
         <div id="message-area" class="chat message-area">
             <div id="waited-msg">
               {% for row in read %}
-                <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
+                <div class="text-box">{{row[0]}}: {{row[1]}} [{{row[2]}}]</div>
               {% endfor%}
-              <div>--------UNREAD---------</div>
-              {% for row in unread %}
-                <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
-              {% endfor %}
             </div>
 
         </div>
