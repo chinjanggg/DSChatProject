@@ -94,11 +94,14 @@
       <div class="column chat">
         <div id="chat-box-head" class="chat-box-head"> </div>
         <div id="message-area" class="chat message-area">
-          <div class="l-text-box"> test msg : === </div>
-          <div class="r-text-box"> === : test msg</div>
+          {% for row in read %}
+            <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
+          {% endfor%}
+          <div>--------UNREAD---------</div>
           {% for row in unread %}
-            <div class="l-text-box"> new msg </div>
+            <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
           {% endfor %}
+          
         </div>
         <input id="chat-input" type="text" placeholder="type message here">
       </div>

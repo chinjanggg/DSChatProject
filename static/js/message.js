@@ -7,10 +7,23 @@ $(document).ready(function() {
   });
 
   //append chat
-  socket.on('message', function(msg) {
-    $(".message-area").append('<li>'+msg+'</li>');
+  socket.on('text', function(msg) {
+    var ms = msg['message'];
+    var us = msg['user'];
+    var tm = msg['time'];
+    console.log("fsfg");
+    if(us == getUn()){
+      $(".message-area").append('<div class="r-text-box">'+ms+' ['+tm+']</div>');
+    }else{
+      $(".message-area").append('<div class="l-text-box">'+ms+' ['+tm+']</div>');
+    }
     updateScroll();
   });
+
+  function getUn(){
+  var username = '<%= Session["user_name"] %>';
+  return username;
+}
 
   //send message when hit enter
   $("#chat-input").keypress(function(e) {

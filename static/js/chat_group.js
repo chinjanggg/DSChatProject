@@ -15,7 +15,7 @@ function showGrName(id){
 	document.getElementById("chat-box-head").innerHTML = name;
 }
 
-function GetUserName(){
+function getUserName(){
 	var username = '<%= Session["user_name"] %>';
 	return username;
 }
