@@ -1,6 +1,7 @@
 /*
-getUnread เอาเแพาะข้อความหลัง break (cancelBreak แล้วจะไม่มีข้อความ)
-getmessage เรียกข้อความก่อน break (ถ้าไม่ break จะเรียกทุกข้อความ)
+getUnread เอาเฉพาะข้อความหลัง break (cancelBreak แล้วจะไม่มีข้อความ)
+getmessage เรียกข้อความก่อน break ไม่เอาข้อความหลัง break (ถ้าไม่ break จะเรียกทุกข้อความ)
+breakGroup จะ break แล้วจำว่า break ที่ข้อความไหน
 
 */
 
