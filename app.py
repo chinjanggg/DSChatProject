@@ -115,7 +115,7 @@ def handle_message(message):
 		flash('Group not found')
 		cursor.close()
 		return
-	cursor.execute("call storeMessage('" + user + "', '" + group + "', '" + message + "');")
+	cursor.execute("call storeMessage('" + user + "', '" + group + "', '" + re.escape(message) + "');")
 	conn.commit()
 	cursor.close()
 
@@ -244,8 +244,10 @@ def getRead(user, group):
 	messages = []
 	for msg in read:
 		time = msg[1].replace(microsecond=0).isoformat()
-		cursor.execute("select DisplayName from Client where CID = '" + msg[3] + "';")
-		user = cursor.fetchone()[0]
+		cursor.execute("select DisplayName from Client where CID = '" + msg[4] + "';")
+		user = cursor.fetchone()
+		if user == None:
+			continue
 		messages.append((user, msg[2], time))
 	cursor.close()
 	print('read:', messages)
