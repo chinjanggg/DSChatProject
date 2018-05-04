@@ -205,7 +205,7 @@ def chat():
 	group_list = []
 	for entry in cursor.fetchall():
 		if entry[0] in group_set:
-			group_list.append(entry[1])
+			group_list.append((entry[0], entry[1]))
 	return render_template('chat.html', form=form, group_list=group_list)
 
 @app.route('/')
