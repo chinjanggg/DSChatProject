@@ -8,13 +8,22 @@ html {
   height: 100%;
 }
 
+.flashes {
+  color: red;
+}
+
+table {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+td {
+  padding: 3px;
+}
+
 .btn-field {
   float: right;
   margin-top: 30px;
-}
-
-.container {
-  /* margin-top: 70px */
 }
 
 /* button */

@@ -1,16 +1,3 @@
-.register-form {
-  margin-top: 70px;
-}
-
-table {
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 20px;
-}
-td {
-  padding: 3px;
-}
-
 .btn-cancel {
   border: 2px solid red;
   color: red;
@@ -19,4 +6,8 @@ td {
 .btn-cancel:hover {
   opacity: 0.8;
   background-color: red;
+}
+
+.register-form {
+  margin-top: 70px;
 }
