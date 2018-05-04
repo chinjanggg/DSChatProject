@@ -100,7 +100,7 @@ def on_break():
 
 def send_message(message, user, time, group):
 	time = time.replace(microsecond=0).isoformat()
-	socketio.emit('message', (message, user, time), broadcast=True, room=group)
+	socketio.emit('message', {'message':message, 'user':user, 'time':time}, broadcast=True, room=group)
 
 @socketio.on('message')
 def handle_message(message):
