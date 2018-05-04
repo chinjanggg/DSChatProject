@@ -7,14 +7,12 @@
     <title> DS Chat Web Project </title>
 
     <!--Bootstrap-->
-    <!--jQuery & Bootstrap JS-->
-    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <!-- Latest compiled and minified JavaScript -->
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.scrl.js') }}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="{{ url_for('static', filename='bootstrap/js/ie10-viewport-bug-workaround.js') }}" rel="stylesheet">
@@ -82,9 +80,8 @@
         <div class="chat-list-head"> Chatlist </div>
         <div id="chat-list" class="chat-list-container">
           {% for row in group_list %}
-          <li id=row[0] class="chat-list-item" >{{ row[1] }}</li>
+            <li id=row[0] class="chat-list-item" >{{ row[1] }}</li>
           {% endfor %}
-          <div> test - 12315648778456 </div>
         </div>
           
         
@@ -92,7 +89,11 @@
 
       <div class="chat">
         <div class="chat-box-head"> Chat's Name </div>
-        <div id="message-area" class="chat message-area"></div>
+        <div id="message-area" class="chat message-area">
+          {% for row in unread %}
+            <div class="l-text-box"> new msg </div>
+          {% endfor %}
+        </div>
         <div class="chat-type">
           <input id="chat-input" type="text" placeholder="type message here">
         </div>
