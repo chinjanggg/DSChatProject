@@ -50,6 +50,7 @@ def on_join(data):
 			break
 	if not found:
 		#flash('Group ID not found')
+		cursor.close()
 		return redirect(url_for('chat'))
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
 	now = datetime.datetime.now()
@@ -286,6 +287,7 @@ def chat():
 			if entry[0] == group_id:
 				flash('Duplicated group ID')
 				#return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+				cursor.close()
 				return render_template('chat.html', form=form, group_list=getGroupList(user), message=getMessage(user, group))
 		cursor.execute("call createGroup('" + group_id + "', '" + group_name + "');")
 		conn.commit()
