@@ -23,7 +23,6 @@ app.config['MYSQL_DATABASE_DB'] = 'ds_chat'
 mysql = MySQL()
 mysql.init_app(app)
 conn = mysql.connect()
-cursor = conn.cursor()
 
 @socketio.on('connect')
 def connect():
@@ -38,6 +37,7 @@ def disconnect():
 	
 @socketio.on('join')
 def on_join(data):
+	cursor = conn.cursor()
 	user = current_user.id
 	group = data['group']
 	cursor.execute('select GID from CGroup;')
@@ -49,15 +49,16 @@ def on_join(data):
 		flash('Group ID not found')
 		return redirect(url_for('chat'))
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
-	session['group_id'] = group
 	now = datetime.datetime.now()
 	send_message(current_user.name + ' has joined the group.', 'System', now, group)
 	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
 	conn.commit()
+	cursor.close()
 	return redirect(url_for('chat'))
 
 @socketio.on('leave')
 def on_leave(data):
+	cursor = conn.cursor()
 	user = current_user.id
 	group = data['group']
 	now = datetime.datetime.now()
@@ -66,9 +67,11 @@ def on_leave(data):
 	conn.commit()
 	leave_room(group)
 	session['group_id'] = 'x'
+	cursor.close()
 
 @socketio.on('switch')
 def on_switch(data):
+	cursor = conn.cursor()
 	user = current_user.id
 	group = data['group']
 	old_group = session.get('group_id')
@@ -80,12 +83,15 @@ def on_switch(data):
 	cursor.execute("call cancelBreak('" + user + "', '" + group + "');")
 	conn.commit()
 	session['group_id'] = group
+	cursor.close()
 	
 @socketio.on('break')
 def on_break():
+	cursor = conn.cursor()
 	old_group = session.get('group_id')
 	leave_room(old_group)
 	cursor.execute("call breakGroup('" + current_user.id + "', '" + old_group + "');")
+	cursor.close()
 
 def send_message(message, user, time, group):
 	time = time.replace(microsecond=0).isoformat()
@@ -93,12 +99,19 @@ def send_message(message, user, time, group):
 
 @socketio.on('message')
 def handle_message(message):
-	user = str(current_user.id)
+	cursor = conn.cursor()
+	user = current_user.id
 	group = str(session.get('group'))
 	now = datetime.datetime.now()
 	print('received: ' + str(message), user, now)
 	send_message(message, current_user.name, now, group)
+	if str(group) == 'None':
+		print('group not found')
+		flash('Group not found')
+		cursor.close()
+		return
 	cursor.execute("call storeMessage('" + user + "', '" + group + "', '" + message + "');")
+	cursor.close()
 
 class User(UserMixin):
 	def __init__(self, id, name):
@@ -111,9 +124,11 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
+	cursor = conn.cursor()
 	inst = "select * from client where cid='" + user_id + "';"
 	cursor.execute(inst)
 	data = cursor.fetchone()
+	cursor.close()
 	return User(data[0], data[1])
 
 class LoginForm(FlaskForm):
@@ -126,16 +141,19 @@ def login():
 	if current_user.is_authenticated:
 		return redirect(url_for('chat'))
 	form = LoginForm()
-	if form.validate_on_submit():		
+	if form.validate_on_submit():	
+		cursor = conn.cursor()
 		# password shouldn't be sent in plain-text
 		cursor.execute('select CID, Password from Client;')
 		for entry in cursor.fetchall():
 			if entry[0] == form.username.data and entry[1] == form.password.data:
 				login_user(load_user(form.username.data))
 				session['group_id'] = 'x'
+				cursor.close()
 				return redirect(url_for('chat'))
 		print('invalid')
 		flash('Invalid username or password')
+		cursor.close()
 	return render_template('login.html', form=form)
 
 @app.route('/logout/')
@@ -160,13 +178,16 @@ def register():
 			flash('Passwords not matched')
 			return render_template('register.html', form=form)
 		username = form.reg_username.data
+		cursor = conn.cursor()
 		cursor.execute('select CID from Client;')
 		for entry in cursor.fetchall():
 			if entry[0] == username:
 				flash('Duplicated username')
+				cursor.close()
 				return render_template('register.html', form=form)
 		cursor.execute("call createUser('" + username + "', '" + form.reg_dpname.data + "', '" + form.reg_password.data + "');")
 		conn.commit()
+		cursor.close()
 		return redirect('/')
 	return render_template('register.html', form=form)
 	
@@ -176,6 +197,7 @@ class CreateGroupForm(FlaskForm):
 	submit = SubmitField('Create')
 
 def getGroupList(user):
+	cursor = conn.cursor()
 	cursor.execute('select * from ClientInGroup;')
 	group_set = set()
 	for entry in cursor.fetchall():
@@ -186,9 +208,11 @@ def getGroupList(user):
 	for entry in cursor.fetchall():
 		if entry[0] in group_set:
 			group_list.append((entry[0], entry[1]))
+	cursor.close()
 	return group_list
 	
 def getUnread(user, group):
+	cursor = conn.cursor()
 	cursor.execute("call getUnread('" + user + "', '" + group + "');")
 	unread = cursor.fetchall()
 	messages = []
@@ -197,9 +221,11 @@ def getUnread(user, group):
 		cursor.execute("select DisplayName from Client where CID = '" + msg[3] + "';")
 		user = cursor.fetchone()[0]
 		messages.append((user, msg[2], time))
+	cursor.close()
 	return messages
 	
 def getRead(user, group):
+	cursor = conn.cursor()
 	cursor.execute("call getMessage('" + user + "', '" + group + "');")
 	read = cursor.fetchall()
 	messages = []
@@ -208,6 +234,7 @@ def getRead(user, group):
 		cursor.execute("select DisplayName from Client where CID = '" + msg[3] + "';")
 		user = cursor.fetchone()[0]
 		messages.append((user, msg[2], time))
+	cursor.close()
 	return messages
 	
 @app.route('/chat/', methods=['GET', 'POST'])
@@ -215,6 +242,7 @@ def getRead(user, group):
 def chat():
 	form = CreateGroupForm()
 	if form.validate_on_submit():
+		cursor = conn.cursor()
 		group_id = form.group_id.data
 		cursor.execute('select GID from CGroup;')
 		for entry in cursor.fetchall():
@@ -223,7 +251,9 @@ def chat():
 				return render_template('chat.html', form=form, group_list=group_list)
 		cursor.execute("call createGroup('" + group_id + "', '" + form.group_name.data + "');")
 		conn.commit()
-	user = str(current_user.id)
+		cursor.close()
+		on_join({'group':group_id})
+	user = current_user.id
 	group = str(session.get('group'))
 	print('groupid:', group)
 	return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
