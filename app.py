@@ -47,6 +47,7 @@ def on_join(data):
 	for entry in cursor.fetchall():
 		if entry[0] == group:
 			found = True
+			break
 	if not found:
 		flash('Group ID not found')
 		return redirect(url_for('chat'))
@@ -265,14 +266,18 @@ def chat():
 		group_id = form.group_id.data
 		group_name = re.escape(form.group_name.data)
 		cursor.execute('select GID from CGroup;')
+		found = False
 		for entry in cursor.fetchall():
 			if entry[0] == group_id:
-				flash('Duplicated group ID')
-				return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
-		cursor.execute("call createGroup('" + group_id + "', '" + group_name + "');")
-		conn.commit()
-		cursor.close()
-		on_join({'group':group_id})
+				found = True
+				break
+		if found:
+			flash('Duplicated group ID')
+		else:
+			cursor.execute("call createGroup('" + group_id + "', '" + group_name + "');")
+			conn.commit()
+			cursor.close()
+			on_join({'group':group_id})
 	return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
 
 @app.route('/')
