@@ -14,16 +14,6 @@
     <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/register.css') }}" rel="stylesheet">
 
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class=flashes>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
   </head>
 
   <body>
@@ -57,6 +47,15 @@
           {{ form.submit() }}
         </form>
 
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
       </div>
     </div>
 
