@@ -25,7 +25,7 @@
 
     <!--CSS-->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/grid-container.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/chat-container.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/modal.css') }}" rel="stylesheet">
 
     <!--JavaScript-->
@@ -78,20 +78,20 @@
     </div>
     <!-- end modal -->
 
-    <div class="grid-container">
+    <div class="row">
 
-      <div class="list">
+      <div class="column list">
         <div class="chat-list-head"> Chatlist </div>
         <div id="chat-list" class="chat-list-container">
           {% for row in group_list %}
             <li id={{row[0]}} class="chat-list-item" >{{ row[1] }}</li>
           {% endfor %}
         </div>
-          
-        
+
+
       </div>
 
-      <div class="chat">
+      <div class="column chat">
         <div id="chat-box-head" class="chat-box-head"> </div>
         <div id="message-area" class="chat message-area">
           <div class="l-text-box"> test msg : === </div>
@@ -100,9 +100,7 @@
             <div class="l-text-box"> new msg </div>
           {% endfor %}
         </div>
-        <div class="chat-type">
-          <input id="chat-input" type="text" placeholder="type message here">
-        </div>
+        <input id="chat-input" type="text" placeholder="type message here">
       </div>
 
     </div>
