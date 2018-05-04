@@ -5,13 +5,9 @@ breakGroup จะ break แล้วจำว่า break ที่ข้อค�
 
 */
 
-
-
-
-
-DROP PROCEDURE IF EXISTS `createUser`;
+DROP PROCEDURE IF EXISTS createUser;
 DELIMITER &&
-CREATE DEFINER=`root`@`localhost` PROCEDURE `createUser`(IN iCID VarChar(20), IN iName VARCHAR(255), IN iPass VARCHAR(255))
+CREATE PROCEDURE createUser(IN iCID VarChar(20), IN iName VARCHAR(255), IN iPass VARCHAR(255))
 BEGIN	INSERT INTO client( 
 		CID,
 		DisplayName,
@@ -23,9 +19,9 @@ BEGIN	INSERT INTO client(
 END&&
 DELIMITER ;
 
-DROP function IF EXISTS `getTime`;
+DROP function IF EXISTS getTime;
 DELIMITER &&
-CREATE DEFINER=`root`@`localhost` FUNCTION `getTime`() RETURNS datetime
+CREATE FUNCTION getTime() RETURNS datetime
 BEGIN
 	RETURN now();
 END&&
@@ -49,9 +45,9 @@ BEGIN
 END //
 DELIMITER ;
 
-DROP function IF EXISTS `getLastMID`;
+DROP function IF EXISTS getLastMID;
 DELIMITER &&
-CREATE DEFINER=`root`@`localhost` FUNCTION `getLastMID`() RETURNS INT
+CREATE FUNCTION getLastMID() RETURNS INT
 BEGIN
 	DECLARE LM INT;
 	SELECT IFNULL(MAX(MID),0) FROM message INTO LM;
