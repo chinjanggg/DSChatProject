@@ -50,14 +50,14 @@ def on_join(data):
 			break
 	if not found:
 		flash('Group ID not found')
+	else:
+		cursor.execute("call joinGroup('" + user + "', '" + group + "');")
+		now = datetime.datetime.now()
+		send_message(user + ' has joined the group.', 'System', now, group)
+		cursor.execute("call breakGroup('" + user + "', '" + group + "');")
+		conn.commit()
+		cursor.close()
 		return redirect(url_for('chat'))
-	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
-	now = datetime.datetime.now()
-	send_message(user + ' has joined the group.', 'System', now, group)
-	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
-	conn.commit()
-	cursor.close()
-	return redirect(url_for('chat'))
 
 @socketio.on('leave')
 def on_leave(data):
