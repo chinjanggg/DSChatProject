@@ -11,9 +11,3 @@ chat page:
        - show number of group member ?
 > message area
   - show template
-
-##################################################
-db-relate function
-> Chatlist
-> LoadChatBox
-> insertChatBox
