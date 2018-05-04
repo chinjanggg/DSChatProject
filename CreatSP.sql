@@ -1,3 +1,4 @@
+DROP PROCEDURE IF EXISTS `createUser`;
 DELIMITER &&
 CREATE DEFINER=`root`@`localhost` PROCEDURE `createUser`(IN iCID VarChar(20), IN iName VARCHAR(255), IN iPass VARCHAR(255))
 BEGIN	INSERT INTO client( 
@@ -11,6 +12,7 @@ BEGIN	INSERT INTO client(
 END&&
 DELIMITER ;
 
+DROP function IF EXISTS `getTime`;
 DELIMITER &&
 CREATE DEFINER=`root`@`localhost` FUNCTION `getTime`() RETURNS datetime
 BEGIN
@@ -18,6 +20,7 @@ BEGIN
 END&&
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS storeMessage;
 DELIMITER //
 CREATE PROCEDURE storeMessage (IN iCID VarChar(20), IN iGID VarChar(20), IN iText VARCHAR(255))
 BEGIN
@@ -35,6 +38,7 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP function IF EXISTS `getLastMID`;
 DELIMITER &&
 CREATE DEFINER=`root`@`localhost` FUNCTION `getLastMID`() RETURNS INT
 BEGIN
@@ -44,7 +48,7 @@ BEGIN
 END&&
 DELIMITER ;
 
-
+DROP PROCEDURE IF EXISTS breakGroup;
 DELIMITER //
 CREATE PROCEDURE breakGroup (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
@@ -60,6 +64,7 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS cancelBreak;
 DELIMITER //
 CREATE PROCEDURE cancelBreak (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
@@ -67,6 +72,7 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS joinGroup;
 DELIMITER //
 CREATE PROCEDURE joinGroup (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
@@ -82,6 +88,7 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS leaveGroup;
 DELIMITER //
 CREATE PROCEDURE leaveGroup (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
@@ -89,6 +96,7 @@ BEGIN
     END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS createGroup;
 DELIMITER //
 CREATE PROCEDURE createGroup (IN iGID VarChar(20), IN iName VarChar(255))
 BEGIN
@@ -102,6 +110,7 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS getUnread;
 DELIMITER //
 CREATE PROCEDURE getUnread (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
@@ -110,6 +119,7 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS getMessage;
 DELIMITER //
 CREATE PROCEDURE getMessage (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
@@ -128,38 +138,3 @@ BEGIN
         END IF;
 END //
 DELIMITER ;
-
-
-#test createuser
-call createUser('user1','a','1');
-call createUser('user2','b','2');
-
-call createGroup('GID1', 'CG1');
-
-call joinGroup('user1','GID1');
-call joinGroup('user2','GID1');
-
-call createGroup('GID2', 'cg2');
-call storeMessage('user1','GID1','a test1');
-call storeMessage('user2','GID1','b test2');
-
-call getMessage('user1','GID1');
-call getMessage('user2','GID1');
-
-# test break
-call breakGroup('user1','GID1');
-
-call storeMessage('user2','GID1','b test3');
-call storeMessage('user2','GID1','b test4');
-
-# user1 should get 123 user2 get 1234
-call getMessage('user1','GID1');
-call getMessage('user2','GID1');
-#user1 get 4
-call getUnread('user1','GID1');
-
-call cancelBreak('user1','GID1');
-# now user1 get 1234
-call getMessage('user1','GID1');
-
-call leaveGroup('user1','GID1');
