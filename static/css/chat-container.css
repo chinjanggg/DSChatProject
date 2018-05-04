@@ -30,7 +30,7 @@
 }
 
 .chat-list-container {
-	overflow: auto;
+	overflow: scroll;
 	/* height: 650px; */
 }
 
@@ -64,11 +64,11 @@
 }
 
 .chat.message-area {
-  height: 420px;
+  height: 560px;
   width: 100%;
   background-color: pink;
   padding: 10px;
-	overflow: auto;
+	overflow: scroll;
   margin-bottom: 10px;
 }
 

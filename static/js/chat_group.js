@@ -14,3 +14,8 @@ function showGrName(id){
 	var name = document.getElementById(id).innerHTML;
 	document.getElementById("chat-box-head").innerHTML = name;
 }
+
+function GetUserName(){
+	var username = '<%= Session["user_name"] %>';
+	return username;
+}
