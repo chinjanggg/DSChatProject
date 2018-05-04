@@ -1,0 +1,33 @@
+call createUser('tester','tester','tester');
+
+call createGroup('1', '1');
+call createGroup('2', '2');
+call createGroup('3', '3');
+call createGroup('4', '4');
+call createGroup('5', '5');
+call createGroup('6', '6');
+call createGroup('7', '7');
+call createGroup('8', '8');
+call createGroup('9', '9');
+call createGroup('10', '10');
+call createGroup('11', '11');
+call createGroup('12', '12');
+call createGroup('13', '13');
+call createGroup('14', '14');
+call createGroup('15', '15');
+
+call joinGroup('tester', '1');
+call joinGroup('tester', '2');
+call joinGroup('tester', '3');
+call joinGroup('tester', '4');
+call joinGroup('tester', '5');
+call joinGroup('tester', '6');
+call joinGroup('tester', '7');
+call joinGroup('tester', '8');
+call joinGroup('tester', '9');
+call joinGroup('tester', '10');
+call joinGroup('tester', '11');
+call joinGroup('tester', '12');
+call joinGroup('tester', '13');
+call joinGroup('tester', '14');
+call joinGroup('tester', '15');
