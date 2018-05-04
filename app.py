@@ -103,7 +103,7 @@ def on_break():
 def send_message(message, user, time, group):
 	time = time.replace(microsecond=0).isoformat()
 	#socketio.emit('text', {'message':message, 'user':user, 'time':time}, broadcast=True, room=group)
-	socketio.emit('text', {'message':message, 'user':user, 'time':time}, broadcast=True)
+	socketio.emit('text', {'message':message, 'user':user, 'time':time, 'group':group}, broadcast=True)
 
 @socketio.on('message')
 def handle_message(message):
