@@ -14,6 +14,7 @@ import datetime
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['PERMANENT_SESSION_LIFETIME'] = 600
 Session(app)
 socketio = SocketIO(app, manage_session=False)
 
@@ -28,6 +29,7 @@ mysql = MySQL()
 mysql.init_app(app)
 conn = mysql.connect()
 
+
 @socketio.on('connect')
 def connect():
 	if current_user.is_authenticated:
@@ -39,9 +41,10 @@ def disconnect():
 	
 @socketio.on('join')
 def on_join(data):
-	cursor = conn.cursor()
 	user = session.get('user_id')
 	group = data['group']
+	print(user, 'is joining', group)
+	cursor = conn.cursor()
 	cursor.execute('select GID from CGroup;')
 	found = False
 	for entry in cursor.fetchall():
@@ -79,6 +82,8 @@ def on_switch(data):
 	user = session.get('user_id')
 	group = data['group']
 	old_group = session.get('group_id')
+	print(user,end=' ')
+	print('is switching from:' + old_group)
 	if old_group != 'x':
 		leave_room(old_group)
 		cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
@@ -90,6 +95,7 @@ def on_switch(data):
 	session.modified = True
 	cursor.close()
 	print('switching to:', session.get('group_id'))
+	#socketio.emit('history', getMessage(user, group), broadcast=True)
 	return redirect(url_for('chat'))
 	
 @socketio.on('break')
@@ -133,6 +139,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
+	conn = mysql.connect()
 	cursor = conn.cursor()
 	cursor.execute('select CID, DisplayName from Client;')
 	temp = cursor.fetchall()
@@ -163,6 +170,7 @@ def login():
 				session['group_id'] = 'x'
 				session['user_id'] = entry[0]
 				session['user_name'] = entry[2]
+				session.modified = True
 				return redirect(url_for('chat'))
 		print('invalid')
 		flash('Invalid username or password')
@@ -261,15 +269,17 @@ def getMessage(user, group):
 	cursor.execute("call getAllMessage('" + user + "', '" + group + "');")
 	all = cursor.fetchall()
 	messages = []
-	for msg in all:
+	#messages = {}
+	for i, msg in enumerate(all):
 		time = msg[1].replace(microsecond=0).isoformat()
 		cursor.execute("select DisplayName from Client where CID = '" + msg[4] + "';")
 		user = cursor.fetchone()
 		if user == None:
 			continue
 		messages.append((user, msg[2], time))
+		#messages[i] = {'message':msg[2], 'user':user, 'time'=time, 'group'=group}
+	print(i, 'messages found')
 	cursor.close()
-	print('read:', messages)
 	return messages
 	
 @app.route('/chat/', methods=['GET', 'POST'])
@@ -277,6 +287,7 @@ def getMessage(user, group):
 def chat():
 	user = session.get('user_id')
 	group = session.get('group_id')
+	print('userid:', user)
 	print('groupid:', group)
 	form = CreateGroupForm()
 	if form.validate_on_submit():
@@ -287,15 +298,17 @@ def chat():
 		for entry in cursor.fetchall():
 			if entry[0] == group_id:
 				flash('Duplicated group ID')
-				#return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
 				cursor.close()
-				return render_template('chat.html', form=form, group_list=getGroupList(user), message=getMessage(user, group))
+				return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+				#return render_template('chat.html', form=form, group_list=getGroupList(user), message=getMessage(user, group))
+				#return render_template('chat.html', form=form, group_list=getGroupList(user))
 		cursor.execute("call createGroup('" + group_id + "', '" + group_name + "');")
 		conn.commit()
 		cursor.close()
 		on_join({'group':group_id})
-	#return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
-	return render_template('chat.html', form=form, group_list=getGroupList(user), message=getMessage(user, group))
+	return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+	#return render_template('chat.html', form=form, group_list=getGroupList(user), message=getMessage(user, group))
+	#return render_template('chat.html', form=form, group_list=getGroupList(user))
 
 @app.route('/')
 def index():
