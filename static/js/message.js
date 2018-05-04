@@ -11,19 +11,9 @@ $(document).ready(function() {
     var ms = msg['message'];
     var us = msg['user'];
     var tm = msg['time'];
-    console.log("fsfg");
-    if(us == getUn()){
-      $(".message-area").append('<div class="r-text-box">'+ms+' ['+tm+']</div>');
-    }else{
-      $(".message-area").append('<div class="l-text-box">'+ms+' ['+tm+']</div>');
-    }
+    $(".message-area").append('<div class="text-box">'+us+': '+ms+' ['+tm+']</div>');
     updateScroll();
   });
-
-  function getUn(){
-  var username = '<%= Session["user_name"] %>';
-  return username;
-}
 
   //send message when hit enter
   $("#chat-input").keypress(function(e) {
