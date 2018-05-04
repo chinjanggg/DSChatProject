@@ -92,8 +92,10 @@
       </div>
 
       <div class="chat">
-        <div class="chat-box-head"> Chat's Name </div>
+        <div id="chat-box-head" class="chat-box-head"> </div>
         <div id="message-area" class="chat message-area">
+          <div class="l-text-box"> test msg : === </div>
+          <div class="r-text-box"> === : test msg</div>
           {% for row in unread %}
             <div class="l-text-box"> new msg </div>
           {% endfor %}

@@ -5,6 +5,12 @@ $(document).ready(function() {
   	console.log('loading...' + this.id);
     socket.emit('switch', {'group': this.id});
     console.log('loaded chat group id: '+ this.id);
+    showGrName(this.id);
   });
 
 });
+
+function showGrName(id){
+	var name = document.getElementById(id).innerHTML;
+	document.getElementById("chat-box-head").innerHTML = name;
+}

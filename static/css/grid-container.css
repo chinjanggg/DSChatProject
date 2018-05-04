@@ -54,6 +54,7 @@
 	padding: 4px;
 	border-style: none solid solid solid;
 	border-color: red;
+	text-align: left;
 }
 
 .leave-group {
@@ -83,15 +84,17 @@
 
 .l-text-box {
 	height: 50px;
+	width: 40px
 	padding: 4px;
-	background-color: lightgrey;
+	background-color: #DFEFCA;
 	text-align: left;
+	overflow: hidden;
 }
 
 .r-text-box {
 	height: 50px;
 	padding: 4px;
-	background-color: grey;
+	background-color: #E1E1E1;
 	text-align: right;
 }
 
