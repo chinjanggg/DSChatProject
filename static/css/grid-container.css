@@ -63,9 +63,10 @@
 
 .chat.message-area {
   height: 420px;
+  width: 100%;
   background-color: pink;
   padding: 10px;
-	overflow: auto;
+	overflow: hidden;
 }
 
 .chat-box-head {

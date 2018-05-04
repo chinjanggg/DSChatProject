@@ -81,6 +81,9 @@
       <div class="list">
         <div class="chat-list-head"> Chatlist </div>
         <div id="chat-list" class="chat-list-container"></div>
+        {% for row in group_list %}
+          <li id=""+row[0] class="chat-list-item" >{{ row[1] }}</li>
+        {% endfor %}
       </div>
 
       <div class="chat">

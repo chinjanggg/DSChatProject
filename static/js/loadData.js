@@ -1,5 +1,5 @@
  function loadPage(){
-    loadChatList();
+    //loadChatList();
     //loadChatBox();
   }
 
