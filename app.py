@@ -90,6 +90,7 @@ def on_switch(data):
 	session.modified = True
 	cursor.close()
 	print(session['group_id'])
+	return redirect(url_for('chat'))
 	
 @socketio.on('break')
 def on_break():
