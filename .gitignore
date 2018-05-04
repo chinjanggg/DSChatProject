@@ -102,3 +102,8 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# caches
+__pycache__
+xxx/__pycache__
+yyy/__pycache__
