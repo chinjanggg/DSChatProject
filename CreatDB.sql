@@ -1,11 +1,6 @@
-CREATE USER 'ds_chat'@'localhost' IDENTIFIED BY 'alchemy';
-REVOKE ALL PRIVILEGES, grant option from 'ds_chat'@'localhost';
-GRANT ALL PRIVILEGES ON ds_chat.* TO 'ds_chat'@'localhost';
-
-CREATE SCHEMA `ds_chat` ;
-
 use ds_chat;
-
+SET foreign_key_checks = 0;
+DROP TABLE IF EXISTS client;
 CREATE TABLE Client
 (
   CID VARCHAR(20) NOT NULL,
@@ -14,6 +9,7 @@ CREATE TABLE Client
   PRIMARY KEY (CID)
 );
 
+DROP TABLE IF EXISTS cgroup;
 CREATE TABLE CGroup
 (
   GID VARCHAR(20) NOT NULL,
@@ -21,6 +17,7 @@ CREATE TABLE CGroup
   PRIMARY KEY (GID)
 );
 
+DROP TABLE IF EXISTS clientingroup;
 CREATE TABLE ClientInGroup
 (
   CID VARCHAR(20) NOT NULL,
@@ -31,6 +28,7 @@ CREATE TABLE ClientInGroup
   FOREIGN KEY (GID) REFERENCES CGroup(GID)
 );
 
+DROP TABLE IF EXISTS message;
 CREATE TABLE Message
 (
   MID int NOT NULL auto_increment,
@@ -43,6 +41,7 @@ CREATE TABLE Message
   FOREIGN KEY (GID) REFERENCES CGroup(GID)
 );
 
+DROP TABLE IF EXISTS break;
 CREATE TABLE Break
 (
   CID VARCHAR(20) NOT NULL,
@@ -53,5 +52,5 @@ CREATE TABLE Break
   FOREIGN KEY (GID) REFERENCES CGroup(GID),
   FOREIGN KEY (MID) REFERENCES Message(MID)
 );
-
+SET foreign_key_checks = 1;
 
