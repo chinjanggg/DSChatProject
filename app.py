@@ -37,8 +37,9 @@ def disconnect():
     print('Client disconnected')
 	
 @socketio.on('join')
-def on_join(group):
+def on_join(data):
 	user = current_user.id
+	group = data['group']
 	cursor.execute('select GID from CGroup;')
 	found = False
 	for entry in cursor.fetchall():
@@ -46,31 +47,36 @@ def on_join(group):
 			found = True
 	if not found:
 		flash('Group ID not found')
-		redirect(url_for('chat'))
+		return redirect(url_for('chat'))
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
 	session['group_id'] = group
 	now = datetime.datetime.now()
 	send_message(current_user.name + ' has joined the group.', 'System', now, group)
-	cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
+	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
+	conn.commit()
 
 @socketio.on('leave')
-def on_leave(group):
+def on_leave(data):
 	user = current_user.id
+	group = data['group']
 	now = datetime.datetime.now()
 	send_message(current_user.name + ' has left the group.', 'System', now, session.get(group_id))
 	cursor.execute("call leaveGroup('" + user + "', '" + group + "');")
+	conn.commit()
 	leave_room(group)
 	session['group_id'] = 'x'
 
 @socketio.on('switch')
-def on_switch(group):
+def on_switch(data):
 	user = current_user.id
+	group = data['group']
 	old_group = session.get('group_id')
 	if old_group != 'x':
 		leave_room(old_group)
 		cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
 	join_room(group)
 	cursor.execute("call cancelBreak('" + user + "', '" + group + "');")
+	conn.commit()
 	session['group_id'] = group
 	send_unread(user, group)
 	
@@ -82,7 +88,6 @@ def on_break():
 
 def send_message(message, user, time, group):
 	time = time.replace(microsecond=0).isoformat()
-	user = string(user)
 	emit('message', (message, user, time), broadcast=True, room=group)
 
 @socketio.on('message')
@@ -100,7 +105,7 @@ def send_unread():
 	for msg in unread:
 		time = msg[1].replace(microsecond=0).isoformat()
 		cursor.execute("select DisplayName from Client where CID = '" + msg[3] + "';")
-		user = cursor.fetchone()
+		user = cursor.fetchone()[0]
 		send_message(msg[2], user, time, group)
 
 class User(UserMixin):
