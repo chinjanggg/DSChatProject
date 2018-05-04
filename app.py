@@ -50,14 +50,14 @@ def on_join(data):
 			break
 	if not found:
 		flash('Group ID not found')
-	else:
-		cursor.execute("call joinGroup('" + user + "', '" + group + "');")
-		now = datetime.datetime.now()
-		send_message(user + ' has joined the group.', 'System', now, group)
-		cursor.execute("call breakGroup('" + user + "', '" + group + "');")
-		conn.commit()
-		cursor.close()
 		return redirect(url_for('chat'))
+	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
+	now = datetime.datetime.now()
+	send_message(user + ' has joined the group.', 'System', now, group)
+	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
+	conn.commit()
+	cursor.close()
+	return redirect(url_for('chat'))
 
 @socketio.on('leave')
 def on_leave(data):
@@ -266,18 +266,14 @@ def chat():
 		group_id = form.group_id.data
 		group_name = re.escape(form.group_name.data)
 		cursor.execute('select GID from CGroup;')
-		found = False
 		for entry in cursor.fetchall():
 			if entry[0] == group_id:
-				found = True
-				break
-		if found:
-			flash('Duplicated group ID')
-		else:
-			cursor.execute("call createGroup('" + group_id + "', '" + group_name + "');")
-			conn.commit()
-			cursor.close()
-			on_join({'group':group_id})
+				flash('Duplicated group ID')
+				return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+		cursor.execute("call createGroup('" + group_id + "', '" + group_name + "');")
+		conn.commit()
+		cursor.close()
+		on_join({'group':group_id})
 	return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
 
 @app.route('/')
