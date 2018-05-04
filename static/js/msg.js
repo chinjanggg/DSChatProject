@@ -14,4 +14,9 @@
  	document.getElementByID("message-area").appendChild(pnode);
  }
 
- 
+ function show_history(){
+ 	var i =0;
+ 	for (var i = 0 ; i< history.length - 1; i++) {
+ 		append_msg(history[i]);
+ 	}
+ }
