@@ -54,6 +54,7 @@ def on_join(data):
 	send_message(current_user.name + ' has joined the group.', 'System', now, group)
 	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
 	conn.commit()
+	return redirect(url_for('chat'))
 
 @socketio.on('leave')
 def on_leave(data):
@@ -74,11 +75,11 @@ def on_switch(data):
 	if old_group != 'x':
 		leave_room(old_group)
 		cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
+	redirect('chat')
 	join_room(group)
 	cursor.execute("call cancelBreak('" + user + "', '" + group + "');")
 	conn.commit()
 	session['group_id'] = group
-	send_unread(user, group)
 	
 @socketio.on('break')
 def on_break():
@@ -92,21 +93,12 @@ def send_message(message, user, time, group):
 
 @socketio.on('message')
 def handle_message(message):
-	user = current_user.id
-	group = session.get('group')
+	user = str(current_user.id)
+	group = str(session.get('group'))
 	now = datetime.datetime.now()
 	print('received: ' + str(message), user, now)
 	send_message(message, current_user.name, now, group)
 	cursor.execute("call storeMessage('" + user + "', '" + group + "', '" + message + "');")
-
-def send_unread():
-	cursor.execute("call getUnread('" + user + "', '" + group + "');")
-	unread = cursor.fetchall()
-	for msg in unread:
-		time = msg[1].replace(microsecond=0).isoformat()
-		cursor.execute("select DisplayName from Client where CID = '" + msg[3] + "';")
-		user = cursor.fetchone()[0]
-		send_message(msg[2], user, time, group)
 
 class User(UserMixin):
 	def __init__(self, id, name):
@@ -182,6 +174,41 @@ class CreateGroupForm(FlaskForm):
 	group_id = StringField('Group ID', validators=[DataRequired()])
 	group_name = StringField('Group Name', validators=[DataRequired()])
 	submit = SubmitField('Create')
+
+def getGroupList(user):
+	cursor.execute('select * from ClientInGroup;')
+	group_set = set()
+	for entry in cursor.fetchall():
+		if entry[0] == user:
+			group_set.add(entry[1])
+	cursor.execute('select GID, GName from CGroup;')
+	group_list = []
+	for entry in cursor.fetchall():
+		if entry[0] in group_set:
+			group_list.append((entry[0], entry[1]))
+	return group_list
+	
+def getUnread(user, group):
+	cursor.execute("call getUnread('" + user + "', '" + group + "');")
+	unread = cursor.fetchall()
+	messages = []
+	for msg in unread:
+		time = msg[1].replace(microsecond=0).isoformat()
+		cursor.execute("select DisplayName from Client where CID = '" + msg[3] + "';")
+		user = cursor.fetchone()[0]
+		messages.append((user, msg[2], time))
+	return messages
+	
+def getRead(user, group):
+	cursor.execute("call getMessage('" + user + "', '" + group + "');")
+	read = cursor.fetchall()
+	messages = []
+	for msg in read:
+		time = msg[1].replace(microsecond=0).isoformat()
+		cursor.execute("select DisplayName from Client where CID = '" + msg[3] + "';")
+		user = cursor.fetchone()[0]
+		messages.append((user, msg[2], time))
+	return messages
 	
 @app.route('/chat/', methods=['GET', 'POST'])
 @login_required
@@ -193,20 +220,13 @@ def chat():
 		for entry in cursor.fetchall():
 			if entry[0] == group_id:
 				flash('Duplicated group ID')
-				return render_template('chat.html', form=form)
+				return render_template('chat.html', form=form, group_list=group_list)
 		cursor.execute("call createGroup('" + group_id + "', '" + form.group_name.data + "');")
 		conn.commit()
-	cursor.execute('select * from ClientInGroup;')
-	group_set = set()
-	for entry in cursor.fetchall():
-		if entry[0] == current_user.id:
-			group_set.add(entry[1])
-	cursor.execute('select GID, GName from CGroup;')
-	group_list = []
-	for entry in cursor.fetchall():
-		if entry[0] in group_set:
-			group_list.append((entry[0], entry[1]))
-	return render_template('chat.html', form=form, group_list=group_list)
+	user = str(current_user.id)
+	group = str(session.get('group'))
+	print('groupid:', group)
+	return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
 
 @app.route('/')
 def index():
