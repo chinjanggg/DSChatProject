@@ -1,10 +1,20 @@
 body {
   background-color: lightgreen;
   height: 100%;
+  text-align: center;
 }
 
 html {
   height: 100%;
+}
+
+.btn-field {
+  float: right;
+  margin-top: 30px;
+}
+
+.container {
+  /* margin-top: 70px */
 }
 
 /* button */
@@ -28,12 +38,6 @@ html {
 }
 .btn-reg:hover {
   background-color: blue;
-}
-.btn-addchat {
-  border: 2px solid green;
-}
-.btn-addchat:hover {
-  background-color: green;
 }
 .btn-logout {
   border: 2px solid red;

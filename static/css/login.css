@@ -1,21 +1,10 @@
-.container {
-  width:100%;
-  text-align: center;
-}
-
-.register {
-  float: right;
-  margin-top: 30px;
-  margin-right: 20px;
-}
-
 .logo {
   margin: 20px;
   margin-top: 70px;
 }
 
 .input-field {
-  margin: 5px;
+  /* margin: 5px; */
 }
 
 #register-form {

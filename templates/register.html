@@ -6,23 +6,48 @@
 
     <title> DS Chat Web Project </title>
 
+    <!--Bootstrap-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/register.css') }}" rel="stylesheet">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
 
   </head>
 
   <body>
-    <p align="center"><h2>Register New Account</h2></p>
-    <form action="" method="POST">
-      {{ form.hidden_tag() }}
-      {{ form.reg_username.label }}
-      {{ form.reg_username(size=20) }}<br>
-      {{ form.reg_dpname.label }}
-      {{ form.reg_dpname(size=20) }}<br>
-      {{ form.reg_password.label }}
-      {{ form.reg_password(size=20) }}<br>
-      {{ form.reg_repassword.label }}
-      {{ form.reg_repassword(size=20) }}<br>
-      {{ form.submit() }}
-    </form>
+
+    <div class="container">
+      <div class="btn-field cancel">
+        <a class="btn btn-logout" href="/login" role="button">Register</a>
+      </div>
+      <div class="register-form">
+        <p align="center"><h2>Register New Account</h2></p>
+        <form action="" method="POST">
+          {{ form.hidden_tag() }}
+          {{ form.reg_username.label }}
+          {{ form.reg_username(size=20) }}<br>
+          {{ form.reg_dpname.label }}
+          {{ form.reg_dpname(size=20) }}<br>
+          {{ form.reg_password.label }}
+          {{ form.reg_password(size=20) }}<br>
+          {{ form.reg_repassword.label }}
+          {{ form.reg_repassword(size=20) }}<br>
+          {{ form.submit() }}
+        </form>
+      </div>
+    </div>
+
   </body>
 </html>
