@@ -256,7 +256,7 @@ def getRead(user, group):
 	for msg in read:
 		time = msg[1].replace(microsecond=0).isoformat()
 		cursor.execute("select DisplayName from Client where CID = '" + msg[4] + "';")
-		user = cursor.fetchone()
+		user = cursor.fetchone()[0]
 		if user == None:
 			continue
 		messages.append((user, msg[2], time))
@@ -273,7 +273,7 @@ def getMessage(user, group):
 	for i, msg in enumerate(all):
 		time = msg[1].replace(microsecond=0).isoformat()
 		cursor.execute("select DisplayName from Client where CID = '" + msg[4] + "';")
-		user = cursor.fetchone()
+		user = cursor.fetchone()[0]
 		if user == None:
 			continue
 		messages.append((user, msg[2], time))
