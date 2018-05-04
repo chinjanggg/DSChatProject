@@ -83,6 +83,12 @@
 	color: white;
 }
 
+.text-box {
+  padding: 4px;
+  text-align: left;
+  overflow: auto;
+}
+
 .l-text-box {
 	height: 50px;
   /* width: auto; */
