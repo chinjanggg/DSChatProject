@@ -145,3 +145,14 @@ BEGIN
         END IF;
 END //
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS getAllMessage;
+DELIMITER //
+CREATE PROCEDURE getAllMessage (IN iCID VarChar(20), IN iGID VarChar(20))
+BEGIN
+		SELECT M.MID, M.Timestamp, M.Text, M.GID, M.CID 
+			FROM message M
+			WHERE M.GID = iGID and M.MID > 
+            (SELECT cig.StartMID FROM clientingroup cig where cig.GID=iGID and cig.CID=iCID);
+END //
+DELIMITER ;
