@@ -1,4 +1,4 @@
-<html>
+﻿<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -100,13 +100,15 @@
       <div class="column chat">
         <div id="chat-box-head" class="chat-box-head"> </div>
         <div id="message-area" class="chat message-area">
-          {% for row in read %}
-            <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
-          {% endfor%}
-          <div>--------UNREAD---------</div>
-          {% for row in unread %}
-            <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
-          {% endfor %}
+            <div id="waited-msg">
+              {% for row in read %}
+                <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
+              {% endfor%}
+              <div>--------UNREAD---------</div>
+              {% for row in unread %}
+                <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
+              {% endfor %}
+            </div>
 
         </div>
         <input id="chat-input" type="text" placeholder="type message here">
