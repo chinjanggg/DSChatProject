@@ -45,9 +45,15 @@
           <div class="navbar-header">
             <a class="navbar-brand" href="home.html">DChat</a>
           </div>
-
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
+              {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  {% for message in messages %}
+                    <h class="flashes"><b>{{ message }}</b></h>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
               <input id="gid-input" type="text" placeholder="group id">
               <button id="join-group">Join</button>
               <a id="createChat" class="btn btn-addchat">Create Chat</a>
@@ -101,7 +107,7 @@
           {% for row in unread %}
             <div class="l-text-box"> {{row[1]}} [{{row[2]}}]</div>
           {% endfor %}
-          
+
         </div>
         <input id="chat-input" type="text" placeholder="type message here">
       </div>
