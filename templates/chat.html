@@ -7,13 +7,17 @@
     <title> DS Chat Web Project </title>
 
     <!--Bootstrap-->
+    <!--jQuery & Bootstrap JS-->
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <!-- Latest compiled and minified JavaScript -->
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.scrl.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
+
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="{{ url_for('static', filename='bootstrap/js/ie10-viewport-bug-workaround.js') }}" rel="stylesheet">
 
@@ -33,7 +37,7 @@
 
   </head>
 
-  <body onload="loadPage()">
+  <body>
     <!-- navbar -->
     <div class="navbar">
       <nav class="navbar navbar-inverse">
