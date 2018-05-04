@@ -256,6 +256,9 @@ def getRead(user, group):
 @app.route('/chat/', methods=['GET', 'POST'])
 @login_required
 def chat():
+	user = session['user_id']
+	group = session['group_id']
+	print('groupid:', group)
 	form = CreateGroupForm()
 	if form.validate_on_submit():
 		cursor = conn.cursor()
@@ -270,9 +273,6 @@ def chat():
 		conn.commit()
 		cursor.close()
 		on_join({'group':group_id})
-	user = session['user_id']
-	group = session['group_id']
-	print('groupid:', group)
 	return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
 
 @app.route('/')
