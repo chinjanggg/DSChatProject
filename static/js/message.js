@@ -1,3 +1,5 @@
+var history ;
+
 $(document).ready(function() {
 
   //connect
@@ -8,10 +10,8 @@ $(document).ready(function() {
 
   //append chat
   socket.on('text', function(msg) {
-    var ms = msg['message'];
-    var us = msg['user'];
-    var tm = msg['time'];
-    $(".message-area").append('<div class="text-box">'+us+': '+ms+' ['+tm+']</div>');
+    history = msg;
+    //$(".message-area").append('<div class="text-box">'+us+': '+ms+' ['+tm+']</div>');
     updateScroll();
   });
 
@@ -35,3 +35,59 @@ $(document).ready(function() {
   }
 
 });
+
+/////////////////////////////////////////////////////////////////////////////////
+
+$(document).ready(function() {
+  var socket = io.connect('http://localhost:5000');
+
+  $('.chat-list-item').on('click', function() {
+    socket.emit('switch', {'group': this.id});
+    showGrName(this.id);
+    //reloadChat();
+    clear_msg_box();
+    show_history(this.id);
+    console.log("printed")
+  });
+
+});
+
+function showGrName(id){
+  var name = document.getElementById(id).innerHTML;
+  document.getElementById("chat-box-head").innerHTML = name;
+}
+
+function getUserName(){
+  var username = '<%= Session["user_name"] %>';
+  return username;
+}
+
+function reloadChat() {
+    var wait = document.getElementById('waited-msg').innerHTML;
+    document.getElementById('message-area').innerHTML = wait;
+    console.log("display")
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
+function clear_msg_box() {
+  document.getElementById("message-area").innerHTML = "";
+ } 
+
+ function append_msg(msg) {
+  var pnode = document.createElement("DIV");
+  var cnode = document.createElement("SPAN");
+  pnode.className = "l-text-box";
+  pnode.innerHTML = msg['message'];
+  cnode.innerHTML = msg['user'] + " [" + msg['time'] + "]";
+  pnode.appendChild(cnode);
+  document.getElementById("message-area").appendChild(pnode);
+ }
+
+ function show_history(grId){
+  var i =0;
+  for (var i = 0 ; i< history.length - 1; i++) {
+    if(history[i]['group'] == grId) append_msg(history[i]);
+    console.log('history'+i);
+  }
+ }
