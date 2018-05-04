@@ -114,3 +114,7 @@ input#chat-input {
 #waited-msg {
     display: none;
 }
+
+span {
+	font-size: 10px;
+}
