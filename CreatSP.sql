@@ -55,6 +55,8 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `getLastMID`() RETURNS INT
 BEGIN
 	DECLARE LM INT;
 	SELECT MAX(MID) FROM message INTO LM;
+    IF LM is NULL THEN SET LM = 0;
+    END IF;
 	RETURN LM;
 END&&
 DELIMITER ;
@@ -133,26 +135,6 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS getMessage;
 DELIMITER //
 CREATE PROCEDURE getMessage (IN iCID VarChar(20), IN iGID VarChar(20))
-BEGIN
-
-		IF (SELECT EXISTS(SELECT * FROM break b WHERE b.CID=iCID and b.GID=iGID))
-		THEN 	SELECT M.MID, M.Timestamp, M.Text, M.GID, M.CID 
-				FROM message M, break b 
-                WHERE M.GID = iGID and b.MID >= M.MID and M.MID > 
-				(SELECT cig.StartMID FROM clientingroup cig where cig.GID=iGID and cig.CID=iCID);
-        
-        ELSE SELECT M.MID, M.Timestamp, M.Text, M.GID, M.CID 
-			FROM message M
-			WHERE M.GID = iGID and M.MID > 
-            (SELECT cig.StartMID FROM clientingroup cig where cig.GID=iGID and cig.CID=iCID);
-	
-        END IF;
-END //
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS getAllMessage;
-DELIMITER //
-CREATE PROCEDURE getAllMessage (IN iCID VarChar(20), IN iGID VarChar(20))
 BEGIN
 
 		IF (SELECT EXISTS(SELECT * FROM break b WHERE b.CID=iCID and b.GID=iGID))
