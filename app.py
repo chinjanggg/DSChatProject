@@ -40,7 +40,7 @@ def disconnect():
 @socketio.on('join')
 def on_join(data):
 	cursor = conn.cursor()
-	user = session['user_id']
+	user = session.get('user_id')
 	group = data['group']
 	cursor.execute('select GID from CGroup;')
 	found = False
@@ -50,6 +50,7 @@ def on_join(data):
 			break
 	if not found:
 		#flash('Group ID not found')
+		cursor.close()
 		return redirect(url_for('chat'))
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
 	now = datetime.datetime.now()
@@ -62,10 +63,10 @@ def on_join(data):
 @socketio.on('leave')
 def on_leave(data):
 	cursor = conn.cursor()
-	user = session['user_id']
+	user = session.get('user_id')
 	group = data['group']
 	now = datetime.datetime.now()
-	send_message(user + ' has left the group.', 'System', now, session['group_id'])
+	send_message(user + ' has left the group.', 'System', now, session.get('group_id'))
 	cursor.execute("call leaveGroup('" + user + "', '" + group + "');")
 	conn.commit()
 	leave_room(group)
@@ -74,11 +75,10 @@ def on_leave(data):
 
 @socketio.on('switch')
 def on_switch(data):
-	print('switching')
 	cursor = conn.cursor()
-	user = session['user_id']
+	user = session.get('user_id')
 	group = data['group']
-	old_group = session['group_id']
+	old_group = session.get('group_id')
 	if old_group != 'x':
 		leave_room(old_group)
 		cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
@@ -89,14 +89,15 @@ def on_switch(data):
 	session['group_id'] = group
 	session.modified = True
 	cursor.close()
-	print(session['group_id'])
+	print('switching to:', session.get('group_id'))
+	return redirect(url_for('chat'))
 	
 @socketio.on('break')
 def on_break():
 	cursor = conn.cursor()
-	old_group = session['group_id']
+	old_group = session.get('group_id')
 	leave_room(old_group)
-	cursor.execute("call breakGroup('" + session['user_id'] + "', '" + old_group + "');")
+	cursor.execute("call breakGroup('" + session.get('user_id') + "', '" + old_group + "');")
 	cursor.close()
 
 def send_message(message, user, time, group):
@@ -106,11 +107,11 @@ def send_message(message, user, time, group):
 @socketio.on('message')
 def handle_message(message):
 	cursor = conn.cursor()
-	user = session['user_id']
-	group = session['group_id']
+	user = session.get('user_id')
+	group = session.get('group_id')
 	now = datetime.datetime.now()
 	print('received: ' + str(message), user, now, group)
-	send_message(message, session['user_name'], now, group)
+	send_message(message, session.get('user_name'), now, group)
 	if str(group) == 'None' or str(group) == 'x':
 		print('group not found')
 		#flash('Group not found')
@@ -254,11 +255,27 @@ def getRead(user, group):
 	print('read:', messages)
 	return messages
 	
+def getMessage(user, group):
+	cursor = conn.cursor()
+	cursor.execute("call getAllMessage('" + user + "', '" + group + "');")
+	all = cursor.fetchall()
+	messages = []
+	for msg in all:
+		time = msg[1].replace(microsecond=0).isoformat()
+		cursor.execute("select DisplayName from Client where CID = '" + msg[4] + "';")
+		user = cursor.fetchone()
+		if user == None:
+			continue
+		messages.append((user, msg[2], time))
+	cursor.close()
+	print('read:', messages)
+	return messages
+	
 @app.route('/chat/', methods=['GET', 'POST'])
 @login_required
 def chat():
-	user = session['user_id']
-	group = session['group_id']
+	user = session.get('user_id')
+	group = session.get('group_id')
 	print('groupid:', group)
 	form = CreateGroupForm()
 	if form.validate_on_submit():
@@ -269,12 +286,15 @@ def chat():
 		for entry in cursor.fetchall():
 			if entry[0] == group_id:
 				flash('Duplicated group ID')
-				return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+				#return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+				cursor.close()
+				return render_template('chat.html', form=form, group_list=getGroupList(user), message=getMessage(user, group))
 		cursor.execute("call createGroup('" + group_id + "', '" + group_name + "');")
 		conn.commit()
 		cursor.close()
 		on_join({'group':group_id})
-	return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+	#return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+	return render_template('chat.html', form=form, group_list=getGroupList(user), message=getMessage(user, group))
 
 @app.route('/')
 def index():
