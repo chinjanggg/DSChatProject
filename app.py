@@ -196,7 +196,17 @@ def chat():
 				return render_template('chat.html', form=form)
 		cursor.execute("call createGroup('" + group_id + "', '" + form.group_name.data + "');")
 		conn.commit()
-	return render_template('chat.html', form=form)
+	cursor.execute('select * from ClientInGroup;')
+	group_set = set()
+	for entry in cursor.fetchall():
+		if entry[0] == current_user.id:
+			group_set.add(entry[1])
+	cursor.execute('select GID, GName from CGroup;')
+	group_list = []
+	for entry in cursor.fetchall():
+		if entry[0] in group_set:
+			group_list.append(entry[1])
+	return render_template('chat.html', form=form, group_list=group_list)
 
 @app.route('/')
 def index():
