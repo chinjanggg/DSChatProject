@@ -30,22 +30,33 @@
 
     <div class="container">
       <div class="btn-field cancel">
-        <a class="btn btn-logout" href="/login" role="button">Register</a>
+        <a class="btn btn-cancel" href="/login" role="button">cancel</a>
       </div>
       <div class="register-form">
-        <p align="center"><h2>Register New Account</h2></p>
+        <h2>Register New Account</h2>
         <form action="" method="POST">
           {{ form.hidden_tag() }}
-          {{ form.reg_username.label }}
-          {{ form.reg_username(size=20) }}<br>
-          {{ form.reg_dpname.label }}
-          {{ form.reg_dpname(size=20) }}<br>
-          {{ form.reg_password.label }}
-          {{ form.reg_password(size=20) }}<br>
-          {{ form.reg_repassword.label }}
-          {{ form.reg_repassword(size=20) }}<br>
+          <table class="register-form">
+            <tr class="username">
+              <td>{{ form.reg_username.label }}</td>
+              <td>{{ form.reg_username(size=20) }}</td>
+            </tr>
+            <tr class="displayname">
+              <td>{{ form.reg_dpname.label }}</td>
+              <td>{{ form.reg_dpname(size=20) }}</td>
+            </tr>
+            <tr class="password">
+              <td>{{ form.reg_password.label }}</td>
+              <td>{{ form.reg_password(size=20) }}</td>
+            </tr>
+            <tr class="repassword">
+              <td>{{ form.reg_repassword.label }}</td>
+              <td>{{ form.reg_repassword(size=20) }}</td>
+            </tr>
+          </table>
           {{ form.submit() }}
         </form>
+
       </div>
     </div>
 
