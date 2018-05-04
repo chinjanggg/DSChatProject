@@ -1,6 +1,9 @@
+/*
 CREATE USER 'ds_chat'@'localhost' IDENTIFIED BY 'alchemy';
 REVOKE ALL PRIVILEGES, grant option from 'ds_chat'@'localhost';
 GRANT ALL PRIVILEGES ON ds_chat.* TO 'ds_chat'@'localhost';
+*/
+
 use ds_chat;
 SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS client;
@@ -25,7 +28,7 @@ CREATE TABLE ClientInGroup
 (
   CID VARCHAR(20) NOT NULL,
   GID VARCHAR(20) NOT NULL,
-  StartMID INT,
+  StartMID INT NOT NULL,
   PRIMARY KEY (CID, GID),
   FOREIGN KEY (CID) REFERENCES Client(CID),
   FOREIGN KEY (GID) REFERENCES CGroup(GID)
