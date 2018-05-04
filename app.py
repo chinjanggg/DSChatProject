@@ -7,11 +7,14 @@ from flask_wtf import FlaskForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
+from flask_session import Session
 import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+socketio = SocketIO(app, manage_session=False)
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)
@@ -27,9 +30,7 @@ conn = mysql.connect()
 @socketio.on('connect')
 def connect():
 	if current_user.is_authenticated:
-		print('{0} has joined'.format(current_user.name))
-	else:
-		return render_template('login.html')
+		print('{0} has connected'.format(current_user.name))
 
 @socketio.on('disconnect')
 def disconnect():
@@ -38,7 +39,7 @@ def disconnect():
 @socketio.on('join')
 def on_join(data):
 	cursor = conn.cursor()
-	user = current_user.id
+	user = session['user_id']
 	group = data['group']
 	cursor.execute('select GID from CGroup;')
 	found = False
@@ -50,7 +51,7 @@ def on_join(data):
 		return redirect(url_for('chat'))
 	cursor.execute("call joinGroup('" + user + "', '" + group + "');")
 	now = datetime.datetime.now()
-	send_message(current_user.name + ' has joined the group.', 'System', now, group)
+	send_message(user + ' has joined the group.', 'System', now, group)
 	cursor.execute("call breakGroup('" + user + "', '" + group + "');")
 	conn.commit()
 	cursor.close()
@@ -59,10 +60,10 @@ def on_join(data):
 @socketio.on('leave')
 def on_leave(data):
 	cursor = conn.cursor()
-	user = current_user.id
+	user = session['user_id']
 	group = data['group']
 	now = datetime.datetime.now()
-	send_message(current_user.name + ' has left the group.', 'System', now, session.get(group_id))
+	send_message(user + ' has left the group.', 'System', now, session['group_id'])
 	cursor.execute("call leaveGroup('" + user + "', '" + group + "');")
 	conn.commit()
 	leave_room(group)
@@ -71,10 +72,11 @@ def on_leave(data):
 
 @socketio.on('switch')
 def on_switch(data):
+	print('switching')
 	cursor = conn.cursor()
-	user = current_user.id
+	user = session['user_id']
 	group = data['group']
-	old_group = session.get('group_id')
+	old_group = session['group_id']
 	if old_group != 'x':
 		leave_room(old_group)
 		cursor.execute("call breakGroup('" + user + "', '" + old_group + "');")
@@ -83,34 +85,37 @@ def on_switch(data):
 	cursor.execute("call cancelBreak('" + user + "', '" + group + "');")
 	conn.commit()
 	session['group_id'] = group
+	session.modified = True
 	cursor.close()
+	print(session['group_id'])
 	
 @socketio.on('break')
 def on_break():
 	cursor = conn.cursor()
-	old_group = session.get('group_id')
+	old_group = session['group_id']
 	leave_room(old_group)
-	cursor.execute("call breakGroup('" + current_user.id + "', '" + old_group + "');")
+	cursor.execute("call breakGroup('" + session['user_id'] + "', '" + old_group + "');")
 	cursor.close()
 
 def send_message(message, user, time, group):
 	time = time.replace(microsecond=0).isoformat()
-	emit('message', (message, user, time), broadcast=True, room=group)
+	socketio.emit('message', (message, user, time), broadcast=True, room=group)
 
 @socketio.on('message')
 def handle_message(message):
 	cursor = conn.cursor()
-	user = current_user.id
-	group = str(session.get('group'))
+	user = session['user_id']
+	group = session['group_id']
 	now = datetime.datetime.now()
-	print('received: ' + str(message), user, now)
-	send_message(message, current_user.name, now, group)
-	if str(group) == 'None':
+	print('received: ' + str(message), user, now, group)
+	send_message(message, session['user_name'], now, group)
+	if str(group) == 'None' or str(group) == 'x':
 		print('group not found')
 		flash('Group not found')
 		cursor.close()
 		return
 	cursor.execute("call storeMessage('" + user + "', '" + group + "', '" + message + "');")
+	conn.commit()
 	cursor.close()
 
 class User(UserMixin):
@@ -125,11 +130,12 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
 	cursor = conn.cursor()
-	inst = "select * from client where cid='" + user_id + "';"
-	cursor.execute(inst)
-	data = cursor.fetchone()
+	cursor.execute('select CID, DisplayName from Client;')
+	temp = cursor.fetchall()
 	cursor.close()
-	return User(data[0], data[1])
+	for entry in temp:
+		if entry[0] == user_id:
+			return User(entry[0], entry[1])
 
 class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired()])
@@ -142,25 +148,29 @@ def login():
 		return redirect(url_for('chat'))
 	form = LoginForm()
 	if form.validate_on_submit():	
-		cursor = conn.cursor()
 		# password shouldn't be sent in plain-text
-		cursor.execute('select CID, Password from Client;')
-		for entry in cursor.fetchall():
+		cursor = conn.cursor()
+		cursor.execute('select CID, Password, DisplayName from Client;')
+		clients = cursor.fetchall()
+		cursor.close()
+		for entry in clients:
 			if entry[0] == form.username.data and entry[1] == form.password.data:
-				login_user(load_user(form.username.data))
+				login_user(load_user(entry[0]))
 				session['group_id'] = 'x'
-				cursor.close()
+				session['user_id'] = entry[0]
+				session['user_name'] = entry[2]
 				return redirect(url_for('chat'))
 		print('invalid')
 		flash('Invalid username or password')
-		cursor.close()
 	return render_template('login.html', form=form)
 
 @app.route('/logout/')
 @login_required
 def logout():
 	logout_user()
-	session['group_id'] = 'x'
+	session.pop('user_id', None)
+	session.pop('user_name', None)
+	session.pop('group_id', None)
 	return redirect('/')
 
 class RegisterForm(FlaskForm):
@@ -253,8 +263,8 @@ def chat():
 		conn.commit()
 		cursor.close()
 		on_join({'group':group_id})
-	user = current_user.id
-	group = str(session.get('group'))
+	user = session['user_id']
+	group = session['group_id']
 	print('groupid:', group)
 	return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
 
@@ -266,4 +276,4 @@ def index():
 		return redirect(url_for('login'))
 
 if __name__ == '__main__':
-	socketio.run(app)
+	socketio.run(app, debug=True)
