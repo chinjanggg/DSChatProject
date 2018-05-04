@@ -60,3 +60,7 @@ CREATE TABLE Break
 );
 SET foreign_key_checks = 1;
 
+call createUser('admin','admin','admin');
+call createGroup('admin', 'admin');
+call joinGroup('admin', 'admin');
+call storeMessage('admin', 'admin','initialzed');
