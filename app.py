@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 from flask_session import Session
+import re
 import datetime
 
 app = Flask(__name__)
@@ -188,6 +189,7 @@ def register():
 			flash('Passwords not matched')
 			return render_template('register.html', form=form)
 		username = form.reg_username.data
+		user_display = re.escape(form.reg_dpname.data)
 		cursor = conn.cursor()
 		cursor.execute('select CID from Client;')
 		for entry in cursor.fetchall():
@@ -195,7 +197,7 @@ def register():
 				flash('Duplicated username')
 				cursor.close()
 				return render_template('register.html', form=form)
-		cursor.execute("call createUser('" + username + "', '" + form.reg_dpname.data + "', '" + form.reg_password.data + "');")
+		cursor.execute("call createUser('" + username + "', '" + user_display + "', '" + form.reg_password.data + "');")
 		conn.commit()
 		cursor.close()
 		return redirect('/')
@@ -232,6 +234,7 @@ def getUnread(user, group):
 		user = cursor.fetchone()[0]
 		messages.append((user, msg[2], time))
 	cursor.close()
+	print('unread:', messages)
 	return messages
 	
 def getRead(user, group):
@@ -245,6 +248,7 @@ def getRead(user, group):
 		user = cursor.fetchone()[0]
 		messages.append((user, msg[2], time))
 	cursor.close()
+	print('read:', messages)
 	return messages
 	
 @app.route('/chat/', methods=['GET', 'POST'])
@@ -254,12 +258,13 @@ def chat():
 	if form.validate_on_submit():
 		cursor = conn.cursor()
 		group_id = form.group_id.data
+		group_name = re.escape(form.group_name.data)
 		cursor.execute('select GID from CGroup;')
 		for entry in cursor.fetchall():
 			if entry[0] == group_id:
 				flash('Duplicated group ID')
-				return render_template('chat.html', form=form, group_list=group_list)
-		cursor.execute("call createGroup('" + group_id + "', '" + form.group_name.data + "');")
+				return render_template('chat.html', form=form, group_list=getGroupList(user), unread=getUnread(user, group), read=getRead(user, group))
+		cursor.execute("call createGroup('" + group_id + "', '" + group_name + "');")
 		conn.commit()
 		cursor.close()
 		on_join({'group':group_id})
